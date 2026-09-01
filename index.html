@@ -1,0 +1,3133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Thorne's Sports</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1B2A41">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Thorne's Sports">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root {
+    --navy: #1E2128;
+    --navy-light: #2A2D36;
+    --gold: #4C7093;
+    --gold-light: #6D91B0;
+    --bg: #F4F3EF;
+    --card: #FFFFFF;
+    --text: #14161B;
+    --muted: #6C6E76;
+    --border: #E4E3DD;
+    --live: #E4304B;
+    --win: #17B978;
+  }
+  html.dark-mode {
+    --navy: #0B0C10;
+    --navy-light: #16181D;
+    --gold: #6E90B0;
+    --gold-light: #8FACC7;
+    --bg: #0A0B0E;
+    --card: #16181D;
+    --text: #F0EFEA;
+    --muted: #92949C;
+    --border: #262830;
+    --live: #FF4D5E;
+    --win: #2FD98A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding-bottom: 3rem;
+  }
+  header {
+    background: var(--navy);
+    background-image: linear-gradient(160deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: white;
+    padding: 1.5rem 1.35rem 1.15rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 3px solid var(--gold);
+  }
+  .brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand-left { display: flex; align-items: center; gap: 10px; }
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--navy);
+    flex: none;
+  }
+  header h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.55rem;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .brand-tagline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-top: 3px;
+  }
+  .theme-toggle {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .status-line {
+    font-size: 0.74rem;
+    color: rgba(255,255,255,0.65);
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding-left: 1px;
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #5FCB8C;
+    display: inline-block;
+    box-shadow: 0 0 0 3px rgba(95,203,140,0.18);
+  }
+  .dot.stale { background: #8A8578; box-shadow: none; }
+
+  .countdown-bar {
+    background: var(--gold);
+    background-image: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%);
+    color: var(--navy);
+    padding: 0.6rem 1.1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.02em;
+  }
+  .countdown-bar .cd-label {
+    opacity: 0.7;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+  }
+
+  .tabs {
+    display: flex;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 76px;
+    z-index: 9;
+    overflow-x: auto;
+  }
+  .tab {
+    flex: none;
+    min-width: 20%;
+    text-align: center;
+    padding: 0.85rem 0.6rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+  .tab.active {
+    color: var(--navy);
+    border-bottom-color: var(--gold);
+  }
+
+  main { padding: 1.1rem 1rem; }
+  .tabpanel { display: none; }
+  .tabpanel.active { display: block; }
+
+  .refresh-btn {
+    width: 100%;
+    padding: 0.7rem;
+    border-radius: 10px;
+    border: 1px solid var(--navy);
+    background: var(--card);
+    color: var(--navy);
+    font-size: 0.83rem;
+    font-weight: 600;
+    margin-bottom: 0.7rem;
+    letter-spacing: 0.01em;
+  }
+  .refresh-btn:active { background: var(--bg); }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 0.9rem;
+  }
+  .filter-input, .filter-select {
+    flex: 1;
+    padding: 0.6rem 0.7rem;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 0.82rem;
+  }
+
+  .news-card {
+    display: block;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.05rem 1.1rem;
+    margin-bottom: 0.65rem;
+    text-decoration: none;
+    color: var(--text);
+    box-shadow: 0 1px 2px rgba(27,42,65,0.04);
+  }
+  .news-source {
+    font-size: 0.64rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+  }
+  .news-title { font-size: 0.96rem; font-weight: 600; line-height: 1.4; }
+  .news-desc { font-size: 0.82rem; color: var(--muted); margin-top: 0.4rem; line-height: 1.5; }
+
+  .conf-group { margin-bottom: 1.6rem; }
+  .conf-name {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 0.55rem;
+    padding-left: 0.2rem;
+  }
+  .game-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 0.95rem 1.1rem;
+    margin-bottom: 0.6rem;
+    box-shadow: 0 1px 2px rgba(27,42,65,0.04);
+  }
+  .game-card.clickable { cursor: pointer; }
+  .game-card.clickable:active { box-shadow: none; }
+  .tap-hint {
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 0.55rem;
+    text-align: right;
+  }
+  .detail-panel {
+    margin-top: 0.65rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--border);
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    padding: 0.28rem 0;
+  }
+  .stat-row .label { color: var(--muted); text-align: center; flex: 1; }
+  .stat-row .val { font-weight: 600; width: 60px; text-align: center; }
+  .stat-row .val.away-val { text-align: left; }
+  .stat-row .val.home-val { text-align: right; }
+  .detail-loading { font-size: 0.78rem; color: var(--muted); padding: 0.4rem 0; }
+  .odds-line { font-size: 0.76rem; color: var(--muted); margin-top: 0.5rem; }
+  .wp-wrap { margin: 0.6rem 0; }
+  .wp-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); margin-bottom: 3px; }
+  .team-logo { object-fit: contain; flex: none; vertical-align: middle; margin-right: 6px; }
+  .live-drive-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 0.9rem 1rem; margin-bottom: 0.9rem; }
+  .ld-head { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 0.6rem; margin-bottom: 0.7rem; border-bottom: 1px solid var(--border); }
+  .ld-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.85rem; letter-spacing: 0.03em; }
+  .ld-sub { font-size: 0.72rem; color: var(--muted); }
+  .ld-stats-row { display: flex; gap: 2rem; margin-bottom: 0.8rem; }
+  .ld-stat-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .ld-stat-val { font-size: 0.95rem; font-weight: 700; margin-top: 2px; }
+  .field-svg { width: 100%; height: auto; display: block; margin-bottom: 0.7rem; }
+  .ld-lastplay { background: var(--bg); border-radius: 10px; padding: 0.65rem 0.8rem; }
+  .ld-lastplay-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 0.3rem; }
+  .ld-lastplay-headline { font-weight: 700; font-size: 0.85rem; }
+  .ld-wp { font-size: 0.78rem; color: var(--muted); display: flex; align-items: center; flex: none; }
+  .ld-lastplay-text { font-size: 0.8rem; color: var(--text); line-height: 1.4; }
+  .wx-card {
+    display: flex; align-items: center; gap: 10px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 10px; padding: 0.6rem 0.8rem; margin-bottom: 0.7rem;
+  }
+  .wx-icon { font-size: 1.6rem; flex: none; line-height: 1; }
+  .wx-info { flex: 1; min-width: 0; }
+  .wx-temp { font-size: 0.9rem; font-weight: 700; }
+  .wx-desc { font-weight: 500; color: var(--muted); font-size: 0.78rem; }
+  .wx-sub { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+  .wp-bar { height: 8px; border-radius: 4px; overflow: hidden; display: flex; background: var(--border); }
+  .wp-away { background: var(--navy); }
+  .wp-home { background: var(--gold); }
+  .wp-graph { width: 100%; height: 92px; display: block; margin: 2px 0 0; }
+  .predictor-title {
+    font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--gold); margin-bottom: 0.35rem;
+  }
+
+  .game-meta {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.55rem;
+    color: var(--muted);
+  }
+  .game-meta.live {
+    color: var(--live);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .game-meta.live::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--live);
+    display: inline-block;
+  }
+  .team-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.18rem 0;
+    gap: 8px;
+  }
+  .team-left { display: flex; align-items: center; gap: 7px; min-width: 0; }
+  .star-btn {
+    font-size: 0.95rem;
+    color: var(--border);
+    flex: none;
+    line-height: 1;
+    padding: 2px;
+  }
+  .star-btn.favorited { color: var(--gold); }
+  .team-name { font-size: 0.93rem; font-weight: 600; }
+  .team-name.deepdive { text-decoration: underline dotted; text-underline-offset: 2px; }
+  .rank-chip {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.66rem;
+    font-weight: 800;
+    color: var(--navy);
+    background: var(--gold);
+    border-radius: 5px;
+    padding: 0.06rem 0.32rem;
+    margin-right: 5px;
+    flex: none;
+  }
+  html.dark-mode .rank-chip { color: var(--navy); }
+  .team-record { font-size: 0.7rem; color: var(--muted); font-weight: 500; margin-left: 5px; }
+
+  .player-section { margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px solid var(--border); }
+  .player-cat-title {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    margin: 0.7rem 0 0.3rem;
+  }
+  .player-team-label { font-size: 0.72rem; font-weight: 700; color: var(--text); margin-top: 0.4rem; }
+  .player-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .player-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; margin: 0.25rem 0 0.3rem; white-space: nowrap; }
+  .player-table th, .player-table td { text-align: left; padding: 0.2rem 0.45rem 0.2rem 0; border-bottom: 1px solid var(--border); }
+  .player-table th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 0.6rem; letter-spacing: 0.02em; }
+  .player-table td:first-child, .player-table th:first-child { position: sticky; left: 0; background: var(--card); }
+
+  .pbp-details { margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px solid var(--border); }
+  .pbp-summary {
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--gold); cursor: pointer; list-style: none;
+  }
+  .pbp-summary::-webkit-details-marker { display: none; }
+  .pbp-summary::before { content: '\25B8'; display: inline-block; margin-right: 5px; transition: transform 0.15s; }
+  .pbp-details[open] .pbp-summary::before { transform: rotate(90deg); }
+  .drive-block {
+    margin-top: 0.6rem; padding: 0.55rem 0.7rem;
+    background: var(--bg); border-radius: 8px;
+  }
+  .drive-head { font-size: 0.8rem; font-weight: 700; }
+  .drive-meta { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; margin-bottom: 0.3rem; }
+  .play-row { font-size: 0.74rem; padding: 0.22rem 0; border-top: 1px solid var(--border); line-height: 1.4; }
+
+  /* ---------- Team schedule modal ---------- */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.5);
+    display: none; align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-panel {
+    background: var(--bg);
+    width: 100%; max-width: 640px;
+    max-height: 86vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 18px 18px 0 0;
+    padding: 1.1rem 1.1rem 2rem;
+  }
+  .modal-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    position: sticky; top: -1.1rem; background: var(--bg);
+    padding: 1.1rem 0 0.8rem; margin: -1.1rem 0 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.01em; }
+  .modal-sub { font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; font-weight: 600; }
+  .modal-close { font-size: 1.6rem; line-height: 1; color: var(--muted); padding: 0 0.3rem; flex: none; }
+
+  /* ---------- Conference team directory ---------- */
+  .conf-teams-title {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--gold); font-weight: 700; margin-bottom: 0.5rem; padding-left: 0.2rem;
+  }
+  .conf-teams-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 1.3rem;
+  }
+  .conf-team-card {
+    display: flex; justify-content: space-between; align-items: center; gap: 6px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.6rem 0.7rem;
+  }
+  .conf-team-card:active { background: var(--bg); }
+  .conf-team-name { font-size: 0.8rem; font-weight: 600; }
+  .conf-team-record { font-size: 0.7rem; color: var(--muted); flex: none; }
+
+  .team-score { font-size: 1.2rem; font-weight: 800; color: var(--navy); font-variant-numeric: tabular-nums; flex: none; font-family: 'Barlow Condensed', sans-serif; }
+  html.dark-mode .team-score { color: var(--gold-light); }
+
+  .team-detail {
+    margin-top: 0.5rem;
+    padding: 0.6rem 0.7rem;
+    background: var(--bg);
+    border-radius: 8px;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .placeholder {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 2.5rem 1.2rem;
+    line-height: 1.65;
+  }
+  .placeholder a { color: var(--navy); font-weight: 600; }
+
+  .week-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.9rem;
+  }
+  .week-nav-btn {
+    padding: 0.5rem 0.85rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--navy);
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  html.dark-mode .week-nav-btn { color: var(--gold-light); }
+  .week-nav-btn:active { background: var(--bg); }
+  .week-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .day-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 0.95rem 1.1rem;
+    margin-bottom: 0.6rem;
+    box-shadow: 0 1px 2px rgba(27,42,65,0.04);
+  }
+  .day-card.has-games { cursor: pointer; }
+  .day-card.today { border-color: var(--gold); border-width: 1.5px; }
+  .day-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .day-name { font-size: 0.95rem; font-weight: 600; }
+  .day-name .today-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-left: 6px;
+  }
+  .day-badges { display: flex; gap: 6px; }
+  .day-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.22rem 0.55rem;
+    border-radius: 999px;
+  }
+  .day-badge.cfb { background: rgba(27,42,65,0.08); color: var(--navy); }
+  html.dark-mode .day-badge.cfb { background: rgba(255,255,255,0.08); color: var(--text); }
+  .day-badge.nfl { background: rgba(201,150,47,0.15); color: var(--gold); }
+  .day-badge.none { background: transparent; color: var(--muted); font-weight: 500; }
+  .day-games {
+    margin-top: 0.7rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+  .day-games.open { display: block; }
+  .day-game-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.8rem;
+    padding: 0.3rem 0;
+  }
+  .day-game-row .matchup { color: var(--text); }
+  .day-game-row .time { color: var(--muted); font-size: 0.72rem; white-space: nowrap; margin-left: 8px; }
+  .cal-score { font-weight: 800; font-family: 'Barlow Condensed', sans-serif; color: var(--navy); font-variant-numeric: tabular-nums; }
+  html.dark-mode .cal-score { color: var(--gold-light); }
+  .day-tap-hint { font-size: 0.66rem; color: var(--muted); margin-top: 0.5rem; text-align: right; }
+
+  .poll-toggle { display: flex; gap: 8px; margin-bottom: 0.9rem; }
+  .poll-btn {
+    flex: 1;
+    padding: 0.55rem;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .poll-btn.active { border-color: var(--navy); color: var(--navy); background: rgba(27,42,65,0.05); }
+  html.dark-mode .poll-btn.active { color: var(--gold-light); background: rgba(255,255,255,0.06); }
+
+  .rank-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 1px 2px rgba(27,42,65,0.04);
+  }
+  .rank-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--gold);
+    width: 26px;
+    text-align: center;
+    flex: none;
+  }
+  .rank-info { flex: 1; min-width: 0; }
+  .rank-team { font-size: 0.93rem; font-weight: 600; }
+  .rank-record { font-size: 0.76rem; color: var(--muted); margin-top: 0.1rem; }
+  .rank-trend { font-size: 0.72rem; font-weight: 700; flex: none; width: 42px; text-align: right; }
+  .rank-trend.up { color: var(--win); }
+  .rank-trend.down { color: var(--live); }
+  .rank-trend.same { color: var(--muted); }
+
+  .fav-section { margin-bottom: 1.6rem; }
+  .fav-header {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 0.55rem;
+    padding-left: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* ---------- Alert banner (big plays) ---------- */
+  .alert-toggle {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.08);
+    color: white; font-size: 0.95rem;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 8px;
+  }
+  .alert-toggle.on { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+  .alert-banner {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    background: var(--navy);
+    color: white;
+    padding: 0.8rem 1.1rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 3px solid var(--gold);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  }
+  .alert-banner.show { display: flex; }
+  .alert-banner .close-alert { flex: none; opacity: 0.6; font-size: 1.1rem; line-height: 1; padding: 0 0.2rem; }
+
+  /* ---------- Sub-tabs (Clemson panel) ---------- */
+  .subtabs { display: flex; gap: 8px; margin-bottom: 0.9rem; overflow-x: auto; }
+  .subtab {
+    flex: none;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .subtab.active { border-color: var(--navy); color: var(--navy); background: rgba(27,42,65,0.05); }
+  html.dark-mode .subtab.active { color: var(--gold-light); background: rgba(255,255,255,0.06); }
+  .subpanel { display: none; }
+  .subpanel.active { display: block; }
+
+  /* ---------- Depth chart ---------- */
+  .depth-pos-group { margin-bottom: 1.1rem; }
+  .depth-pos-title {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--gold); margin-bottom: 0.4rem;
+  }
+  .depth-row {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.55rem 0.8rem; margin-bottom: 0.4rem;
+  }
+  .depth-slot {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.85rem;
+    color: var(--muted); width: 22px; flex: none; text-align: center;
+  }
+  .depth-names { flex: 1; font-size: 0.83rem; }
+  .depth-names .starter { font-weight: 700; color: var(--text); }
+  .depth-names .backup { color: var(--muted); font-size: 0.78rem; }
+
+  /* ---------- Small info cards (reused by Coaches, Roster) ---------- */
+  .injury-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 0.75rem 1rem; margin-bottom: 0.5rem;
+  }
+  .injury-name { font-size: 0.88rem; font-weight: 600; }
+  .injury-detail { font-size: 0.76rem; color: var(--muted); margin-top: 0.3rem; }
+
+  /* ---------- Standings ---------- */
+  .standings-group { margin-bottom: 1.5rem; }
+  .standings-title {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--gold); font-weight: 700; margin-bottom: 0.5rem; padding-left: 0.2rem;
+  }
+  .standings-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .standings-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .standings-table th, .standings-table td { padding: 0.5rem 0.6rem; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .standings-table th:first-child, .standings-table td:first-child { text-align: left; position: sticky; left: 0; background: var(--card); }
+  .standings-table th { color: var(--muted); font-weight: 600; font-size: 0.66rem; text-transform: uppercase; }
+  .standings-table tr:last-child td { border-bottom: none; }
+
+  /* ---------- CFP bracket ---------- */
+  .bracket-round-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold); margin: 1rem 0 0.5rem; }
+  .bracket-round-title:first-child { margin-top: 0; }
+  .bracket-matchup {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 0.7rem 0.9rem; margin-bottom: 0.5rem;
+  }
+  .bracket-team { display: flex; justify-content: space-between; align-items: center; padding: 0.15rem 0; font-size: 0.85rem; }
+  .bracket-team .seed { color: var(--gold); font-weight: 800; margin-right: 6px; font-family: 'Barlow Condensed', sans-serif; }
+  .bracket-team .bscore { font-weight: 700; font-family: 'Barlow Condensed', sans-serif; }
+  .bracket-team.winner .seed, .bracket-team.winner span:not(.bscore) { color: var(--text); font-weight: 700; }
+
+  /* ---------- My Teams (favorites) ---------- */
+  .favteam-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 1rem 1.1rem; margin-bottom: 0.7rem;
+  }
+  .favteam-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .favteam-name { font-size: 1rem; font-weight: 700; }
+  .favteam-record { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+  .favteam-row { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+  .sos-bar-wrap { margin-top: 0.5rem; }
+  .sos-bar-track { height: 7px; border-radius: 4px; background: var(--border); overflow: hidden; margin-top: 4px; }
+  .sos-bar-fill { height: 100%; background: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="alert-banner" id="alert-banner">
+  <span id="alert-banner-text"></span>
+  <span class="close-alert" onclick="dismissAlertBanner()">&times;</span>
+</div>
+
+<header>
+  <div class="brand-row">
+    <div class="brand-left">
+      <div class="brand-mark">T</div>
+      <div>
+        <h1>Thorne's Sports</h1>
+        <div class="brand-tagline">Live scores · rankings · news</div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center;">
+      <button class="alert-toggle" id="alert-toggle" onclick="toggleBigPlayAlerts()" title="Big play alerts for your favorites">&#128276;</button>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">&#9789;</button>
+    </div>
+  </div>
+  <div class="status-line"><span class="dot stale" id="status-dot"></span><span id="status-text">Loading...</span></div>
+</header>
+
+<div class="countdown-bar" id="countdown-bar" style="display:none;">
+  <span id="countdown-text">—</span>
+  <span class="cd-label">Clemson</span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="clemson">Clemson</div>
+  <div class="tab" data-tab="scores">Scores</div>
+  <div class="tab" data-tab="info">Info</div>
+  <div class="tab" data-tab="myteams">My Teams</div>
+  <div class="tab" data-tab="calendar">Calendar</div>
+</div>
+
+<div class="modal-overlay" id="team-modal-overlay" onclick="if(event.target===this) closeTeamModal()">
+  <div class="modal-panel">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="team-modal-title">Team</div>
+        <div class="modal-sub" id="team-modal-sub"></div>
+      </div>
+      <span class="modal-close" onclick="closeTeamModal()">&times;</span>
+    </div>
+    <div id="team-modal-body">
+      <div class="placeholder">Loading schedule...</div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <div class="tabpanel active" id="panel-clemson">
+    <div class="subtabs">
+      <button class="subtab active" data-subtab="schedule" onclick="switchClemsonSubtab('schedule')">Schedule</button>
+      <button class="subtab" data-subtab="news" onclick="switchClemsonSubtab('news')">News</button>
+      <button class="subtab" data-subtab="portal" onclick="switchClemsonSubtab('portal')">Recruiting / Portal</button>
+      <button class="subtab" data-subtab="roster" onclick="switchClemsonSubtab('roster')">Roster</button>
+    </div>
+
+    <div class="subpanel active" id="subpanel-schedule">
+      <button class="refresh-btn" onclick="loadClemsonSchedule(true)">Refresh schedule</button>
+      <div id="clemson-schedule-list">
+        <div class="placeholder">Loading Clemson's schedule...</div>
+      </div>
+    </div>
+
+    <div class="subpanel" id="subpanel-news">
+      <button class="refresh-btn" onclick="loadNews()">Refresh Clemson news</button>
+      <div id="news-list">
+        <div class="placeholder">Loading Clemson headlines...</div>
+      </div>
+    </div>
+
+    <div class="subpanel" id="subpanel-portal">
+      <button class="refresh-btn" onclick="loadRecruiting()">Refresh recruiting news</button>
+      <div id="recruiting-list">
+        <div class="placeholder">Loading recruiting &amp; transfer portal news...</div>
+      </div>
+    </div>
+
+    <div class="subpanel" id="subpanel-roster">
+      <button class="refresh-btn" onclick="loadRoster(true)">Refresh roster</button>
+      <div class="filter-row">
+        <input class="filter-input" id="roster-search" placeholder="Search roster..." oninput="renderRosterList()">
+      </div>
+      <div id="roster-list">
+        <div class="placeholder">Loading roster...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="panel-scores">
+    <div class="subtabs">
+      <button class="subtab active" data-subtab="fbs" onclick="switchScoresSubtab('fbs')">All FBS Scores</button>
+      <button class="subtab" data-subtab="nflscores" onclick="switchScoresSubtab('nflscores')">NFL Scores</button>
+      <button class="subtab" data-subtab="standings" onclick="switchScoresSubtab('standings')">Standings</button>
+    </div>
+
+    <div class="subpanel active" id="subpanel-fbs">
+      <div class="week-nav">
+        <button class="week-nav-btn" onclick="changeFbsWeek(-1)">&larr; Prev</button>
+        <div class="week-label" id="fbs-week-label">This week</div>
+        <button class="week-nav-btn" onclick="changeFbsWeek(1)">Next &rarr;</button>
+      </div>
+      <select class="filter-select" id="fbs-week-select" onchange="jumpFbsWeek()" style="width:100%; margin-bottom:0.9rem;">
+        <option value="">This week</option>
+      </select>
+      <button class="refresh-btn" onclick="loadScores(true)">Refresh scores now</button>
+      <div class="filter-row">
+        <input class="filter-input" id="fbs-search" placeholder="Search team..." oninput="applyFbsFilters()">
+        <select class="filter-select" id="fbs-conf-filter" onchange="applyFbsFilters()">
+          <option value="">All conferences</option>
+        </select>
+      </div>
+      <div id="conf-teams-section"></div>
+      <div id="scores-list">
+        <div class="placeholder">Loading live scoreboard...</div>
+      </div>
+    </div>
+
+    <div class="subpanel" id="subpanel-nflscores">
+      <div class="week-nav">
+        <button class="week-nav-btn" onclick="changeNflWeek(-1)">&larr; Prev</button>
+        <div class="week-label" id="nfl-week-label">This week</div>
+        <button class="week-nav-btn" onclick="changeNflWeek(1)">Next &rarr;</button>
+      </div>
+      <select class="filter-select" id="nfl-week-select" onchange="jumpNflWeek()" style="width:100%; margin-bottom:0.9rem;">
+        <option value="">This week</option>
+      </select>
+      <button class="refresh-btn" onclick="loadNFL(true)">Refresh scores now</button>
+      <div class="filter-row">
+        <input class="filter-input" id="nfl-search" placeholder="Search team..." oninput="applyNflFilters()">
+      </div>
+      <div id="nfl-list">
+        <div class="placeholder">Loading NFL scoreboard...</div>
+      </div>
+    </div>
+
+    <div class="subpanel" id="subpanel-standings">
+      <div class="poll-toggle">
+        <button class="poll-btn active" data-standings="college-football" onclick="switchStandingsSport('college-football')">CFB (FBS)</button>
+        <button class="poll-btn" data-standings="nfl" onclick="switchStandingsSport('nfl')">NFL</button>
+      </div>
+      <button class="refresh-btn" onclick="loadStandings(true)">Refresh standings</button>
+      <div id="standings-list">
+        <div class="placeholder">Loading standings...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="panel-info">
+    <div class="subtabs">
+      <button class="subtab active" data-subtab="rankings" onclick="switchInfoSubtab('rankings')">Rankings</button>
+      <button class="subtab" data-subtab="coaches" onclick="switchInfoSubtab('coaches')">Coaches</button>
+      <button class="subtab" data-subtab="leaders" onclick="switchInfoSubtab('leaders')">Leaders</button>
+    </div>
+
+    <div class="subpanel active" id="subpanel-rankings">
+      <div class="poll-toggle">
+        <button class="poll-btn active" data-poll="AP Top 25" onclick="switchPoll('AP Top 25')">AP Top 25</button>
+        <button class="poll-btn" data-poll="Coaches Poll" onclick="switchPoll('Coaches Poll')">Coaches</button>
+        <button class="poll-btn" data-poll="Playoff" onclick="switchPoll('Playoff')">CFP</button>
+      </div>
+      <button class="refresh-btn" onclick="loadRankings(true)">Refresh rankings</button>
+      <div id="rankings-list">
+        <div class="placeholder">Loading rankings...</div>
+      </div>
+      <div id="bracket-section"></div>
+    </div>
+
+    <div class="subpanel" id="subpanel-coaches">
+      <div class="poll-toggle">
+        <button class="poll-btn active" data-coach-sport="college-football" onclick="switchCoachSport('college-football')">CFB</button>
+        <button class="poll-btn" data-coach-sport="nfl" onclick="switchCoachSport('nfl')">NFL</button>
+      </div>
+      <div class="filter-row">
+        <input class="filter-input" id="coach-search" placeholder="Search team..." oninput="renderCoachTeamList()">
+      </div>
+      <div class="disclaimer" style="font-size:0.72rem; color:var(--muted); margin-bottom:0.8rem; line-height:1.5;">Shows each team's head coach, from ESPN's public data. A full assistant-coaching staff (coordinators, position coaches) isn't reliably available through any free source I found — ESPN's API only publishes the head coach, and Wikipedia coverage is too inconsistent to show without frequent wrong answers.</div>
+      <div id="coaches-list">
+        <div class="placeholder">Loading teams...</div>
+      </div>
+    </div>
+
+    <div class="subpanel" id="subpanel-leaders">
+      <div class="poll-toggle">
+        <button class="poll-btn active" data-leaders-sport="college-football" onclick="switchLeadersSport('college-football')">CFB</button>
+        <button class="poll-btn" data-leaders-sport="nfl" onclick="switchLeadersSport('nfl')">NFL</button>
+      </div>
+      <div class="poll-toggle" id="leaders-category-pills" style="overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap;"></div>
+      <div class="disclaimer" style="font-size:0.72rem; color:var(--muted); margin-bottom:0.8rem; line-height:1.5;">Season statistical leaders from ESPN's data. This can take a few seconds to load, especially the first time \u2014 each of the top 25 players may need a couple of lookups to resolve their name and team.</div>
+      <div id="leaders-list">
+        <div class="placeholder">Loading leaders...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="panel-myteams">
+    <button class="refresh-btn" onclick="loadMyTeams(true)">Refresh my teams</button>
+    <div id="myteams-list">
+      <div class="placeholder">Star teams from the scoreboard tabs (tap the &#9734;) to track their record and strength of schedule here.</div>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="panel-calendar">
+    <div class="week-nav">
+      <button class="week-nav-btn" onclick="changeWeek(-1)">&larr; Prev</button>
+      <div class="week-label" id="week-label">This week</div>
+      <button class="week-nav-btn" onclick="changeWeek(1)">Next &rarr;</button>
+    </div>
+    <button class="refresh-btn" onclick="loadCalendar(true)">Refresh this week</button>
+    <div id="calendar-list">
+      <div class="placeholder">Loading week...</div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  /* ---------- Theme ---------- */
+  function applyTheme(dark) {
+    document.documentElement.classList.toggle('dark-mode', dark);
+    document.getElementById('theme-toggle').innerHTML = dark ? '&#9728;' : '&#9789;';
+  }
+  function toggleTheme() {
+    var isDark = !document.documentElement.classList.contains('dark-mode');
+    applyTheme(isDark);
+    try { localStorage.setItem('thornes-dark', isDark ? '1' : '0'); } catch(e) {}
+  }
+  (function initTheme() {
+    var saved = null;
+    try { saved = localStorage.getItem('thornes-dark'); } catch(e) {}
+    applyTheme(saved === '1');
+  })();
+
+  /* ---------- Dynamic team-color theming ---------- */
+  // Neutral (slate/steel-blue) is the default look for every tab. The Clemson tab uses
+  // Clemson's own brand colors, and opening any team's schedule modal recolors the app
+  // using that team's actual colors as reported by ESPN (team.color / alternateColor).
+  var HOME_TEAM_COLORS = { primary: '#F56600', secondary: '#522D80' }; // Clemson Orange / Regalia
+  function hexToRgb(hex) {
+    hex = (hex || '').replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(function(c) { return c + c; }).join('');
+    if (hex.length !== 6) hex = '888888';
+    var num = parseInt(hex, 16);
+    return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+  }
+  function rgbToHex(r, g, b) {
+    function h(x) { x = Math.max(0, Math.min(255, Math.round(x))); var s = x.toString(16); return s.length === 1 ? '0' + s : s; }
+    return '#' + h(r) + h(g) + h(b);
+  }
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+      else if (max === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h /= 6;
+    }
+    return { h: h, s: s, l: l };
+  }
+  function hslToRgb(h, s, l) {
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1 / 6) return p + (q - p) * 6 * t;
+        if (t < 1 / 2) return q;
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1 / 3); g = hue2rgb(p, q, h); b = hue2rgb(p, q, h - 1 / 3);
+    }
+    return { r: r * 255, g: g * 255, b: b * 255 };
+  }
+  // Re-lights a brand color to a target lightness (0-1), boosting saturation a little for
+  // colors that would otherwise look washed out — used so arbitrary team colors from ESPN
+  // (which vary wildly in brightness) still land somewhere legible for the role they're used in.
+  function relight(hex, targetL, minSat) {
+    var rgb = hexToRgb(hex);
+    var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+    var out = hslToRgb(hsl.h, Math.max(hsl.s, minSat), targetL);
+    return rgbToHex(out.r, out.g, out.b);
+  }
+  function colorSaturation(hex) {
+    if (!hex) return -1;
+    var rgb = hexToRgb(hex);
+    return rgbToHsl(rgb.r, rgb.g, rgb.b).s;
+  }
+  var MONOCHROME_GRAY = { navy: '#24262B', navyLight: '#32343B', gold: '#8A8D93', goldLight: '#A7AAB0' };
+  function deriveTeamTheme(primaryHex, secondaryHex) {
+    // Some teams' brand colors are genuinely monochrome (e.g. the Raiders: black + silver —
+    // both essentially colorless). Forcing a saturation boost on an achromatic input just
+    // invents an arbitrary hue (always red, since hue defaults to 0), which is wrong for
+    // that team. Only treat a color as usable if it actually has a real hue to work with.
+    var priSat = colorSaturation(primaryHex);
+    var secSat = colorSaturation(secondaryHex);
+    var navyBase = secSat > 0.12 ? secondaryHex : (priSat > 0.12 ? primaryHex : null);
+    var goldBase = priSat > 0.12 ? primaryHex : (secSat > 0.12 ? secondaryHex : null);
+    if (!navyBase && !goldBase) return MONOCHROME_GRAY;
+    navyBase = navyBase || goldBase;
+    goldBase = goldBase || navyBase;
+    return {
+      navy: relight(navyBase, 0.14, 0.30),
+      navyLight: relight(navyBase, 0.20, 0.30),
+      gold: relight(goldBase, 0.48, 0.55),
+      goldLight: relight(goldBase, 0.62, 0.55)
+    };
+  }
+  // A single legible accent color for a team (e.g. for coloring one side of a bar chart),
+  // derived from their real ESPN color the same way the team-theming accent color is.
+  function teamAccentColor(competitor) {
+    var team = competitor && competitor.team;
+    if (!team) return null;
+    var primary = team.color, secondary = team.alternateColor;
+    var priSat = colorSaturation(primary), secSat = colorSaturation(secondary);
+    if (priSat > 0.12) return relight('#' + primary, 0.48, 0.55);
+    if (secSat > 0.12) return relight('#' + secondary, 0.48, 0.55);
+    if (primary || secondary) return MONOCHROME_GRAY.gold; // genuinely monochrome brand (e.g. black/silver)
+    return null;
+  }
+  function applyThemeColors(theme) {
+    var root = document.documentElement.style;
+    root.setProperty('--navy', theme.navy);
+    root.setProperty('--navy-light', theme.navyLight);
+    root.setProperty('--gold', theme.gold);
+    root.setProperty('--gold-light', theme.goldLight);
+  }
+  function clearThemeOverride() {
+    var root = document.documentElement.style;
+    root.removeProperty('--navy');
+    root.removeProperty('--navy-light');
+    root.removeProperty('--gold');
+    root.removeProperty('--gold-light');
+  }
+  function applyThemeForActiveTab() {
+    var activeTab = document.querySelector('.tab.active');
+    var key = activeTab && activeTab.getAttribute('data-tab');
+    if (key === 'clemson') {
+      applyThemeColors(deriveTeamTheme(HOME_TEAM_COLORS.primary, HOME_TEAM_COLORS.secondary));
+    } else {
+      clearThemeOverride();
+    }
+  }
+
+  /* ---------- Favorites ---------- */
+  function getFavorites() {
+    try {
+      var raw = localStorage.getItem('thornes-favorites');
+      var list = raw ? JSON.parse(raw) : [];
+      return list.map(function(f) { return typeof f === 'string' ? { name: f, id: null, sport: null } : f; });
+    } catch(e) { return []; }
+  }
+  function isFavorite(name) { return getFavorites().some(function(f) { return f.name === name; }); }
+  function toggleFavorite(team) {
+    var favs = getFavorites();
+    var idx = favs.findIndex(function(f) { return f.name === team.name; });
+    if (idx === -1) favs.push(team); else favs.splice(idx, 1);
+    try { localStorage.setItem('thornes-favorites', JSON.stringify(favs)); } catch(e) {}
+  }
+
+  /* ---------- Tabs ---------- */
+  var tabs = document.querySelectorAll('.tab');
+  var panels = document.querySelectorAll('.tabpanel');
+  var lazyLoaded = {};
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      panels.forEach(function(p) { p.classList.remove('active'); });
+      tab.classList.add('active');
+      var key = tab.getAttribute('data-tab');
+      document.getElementById('panel-' + key).classList.add('active');
+      applyThemeForActiveTab();
+      if (!lazyLoaded[key]) {
+        lazyLoaded[key] = true;
+        if (key === 'myteams') loadMyTeams();
+      } else if (key === 'myteams') {
+        loadMyTeams(); // favorites can change between visits; cheap to re-render from cache
+      }
+    });
+  });
+
+  function switchScoresSubtab(name) {
+    document.querySelectorAll('#panel-scores .subtab').forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-subtab') === name); });
+    document.querySelectorAll('#panel-scores .subpanel').forEach(function(p) { p.classList.remove('active'); });
+    document.getElementById('subpanel-' + name).classList.add('active');
+    // FBS and NFL scores are already loaded eagerly at page init; only Standings needs a first-visit fetch.
+    if (name === 'standings' && !lazyLoaded['standings']) {
+      lazyLoaded['standings'] = true;
+      loadStandings();
+    }
+  }
+
+  function switchInfoSubtab(name) {
+    document.querySelectorAll('#panel-info .subtab').forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-subtab') === name); });
+    document.querySelectorAll('#panel-info .subpanel').forEach(function(p) { p.classList.remove('active'); });
+    document.getElementById('subpanel-' + name).classList.add('active');
+    // Rankings is already loaded eagerly at page init.
+    // Coaches and Leaders both need a first-visit fetch.
+    if (name === 'coaches' && !lazyLoaded['coaches']) {
+      lazyLoaded['coaches'] = true;
+      renderCoachTeamList();
+    }
+    if (name === 'leaders' && !lazyLoaded['leaders']) {
+      lazyLoaded['leaders'] = true;
+      renderLeadersCategoryPills();
+      loadLeaders();
+    }
+  }
+
+  function setStatus(ok, msg) {
+    var dot = document.getElementById('status-dot');
+    var text = document.getElementById('status-text');
+    dot.classList.toggle('stale', !ok);
+    text.textContent = msg;
+  }
+  function timeAgo() {
+    var now = new Date();
+    return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  /* ---------- Clemson countdown ---------- */
+  var clemsonSchedule = [
+    { opp: 'at LSU', date: '2026-09-05T23:30:00Z' },
+    { opp: 'vs Georgia Southern', date: '2026-09-12T23:30:00Z' },
+    { opp: 'vs North Carolina', date: '2026-09-19T16:00:00Z' },
+    { opp: 'at Cal', date: '2026-09-26T02:30:00Z' },
+    { opp: 'vs Miami (FL)', date: '2026-10-03T17:00:00Z' },
+    { opp: 'vs Charleston Southern', date: '2026-10-17T17:00:00Z' },
+    { opp: 'vs Virginia Tech', date: '2026-10-24T17:00:00Z' },
+    { opp: 'at Florida State', date: '2026-10-31T17:00:00Z' },
+    { opp: 'at Syracuse', date: '2026-11-07T18:00:00Z' },
+    { opp: 'vs Georgia Tech', date: '2026-11-14T18:00:00Z' },
+    { opp: 'at Duke', date: '2026-11-21T00:30:00Z' },
+    { opp: 'vs South Carolina', date: '2026-11-28T18:00:00Z' }
+  ];
+  function updateCountdown() {
+    var now = new Date();
+    var bar = document.getElementById('countdown-bar');
+    var text = document.getElementById('countdown-text');
+    var next = null;
+    for (var i = 0; i < clemsonSchedule.length; i++) {
+      var d = new Date(clemsonSchedule[i].date);
+      if (d.getTime() - now.getTime() > -4 * 3600000) { next = clemsonSchedule[i]; break; }
+    }
+    if (!next) { bar.style.display = 'none'; return; }
+    bar.style.display = 'flex';
+    var target = new Date(next.date);
+    var diff = target.getTime() - now.getTime();
+    if (diff <= 0 && diff > -4 * 3600000) {
+      text.textContent = 'Clemson ' + next.opp + ' — kickoff window now';
+      return;
+    }
+    var days = Math.floor(diff / 86400000);
+    var hours = Math.floor((diff % 86400000) / 3600000);
+    var mins = Math.floor((diff % 3600000) / 60000);
+    var parts = [];
+    if (days > 0) parts.push(days + 'd');
+    if (hours > 0 || days > 0) parts.push(hours + 'h');
+    parts.push(mins + 'm');
+    text.textContent = 'Clemson ' + next.opp + ' — ' + parts.join(' ');
+  }
+
+  /* ---------- Clemson news ---------- */
+  var TIGERNET_FEEDS = {
+    featured: 'https://feeds.feedburner.com/tigernet',
+    updates: 'https://feeds.feedburner.com/TigernetClemsonUpdates',
+    recruiting: 'https://feeds.feedburner.com/tigernet-recruiting'
+  };
+  function stripHtml(s) {
+    return String(s || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  }
+  function fetchTigerNetFeed(feedUrl) {
+    // TigerNet's RSS feeds don't send CORS headers, so a direct browser fetch is blocked.
+    // Route through the free rss2json proxy, which fetches server-side and returns CORS-friendly JSON.
+    var api = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(feedUrl);
+    return fetch(api)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.status !== 'ok') return [];
+        return (data.items || []).map(function(it) {
+          return {
+            source: 'TigerNet',
+            headline: stripHtml(it.title),
+            description: stripHtml(it.description).slice(0, 220),
+            link: it.link
+          };
+        });
+      })
+      .catch(function() { return []; });
+  }
+  function buildNewsCard(item) {
+    var card = document.createElement('a');
+    card.className = 'news-card';
+    card.href = item.link || '#';
+    card.target = '_blank';
+    card.innerHTML = (item.source ? '<div class="news-source">' + escapeHtml(item.source) + '</div>' : '') +
+      '<div class="news-title">' + escapeHtml(item.headline) + '</div>' +
+      (item.description ? '<div class="news-desc">' + escapeHtml(item.description) + '</div>' : '');
+    return card;
+  }
+  function loadNews() {
+    var list = document.getElementById('news-list');
+    list.innerHTML = '<div class="placeholder">Loading Clemson headlines...</div>';
+    var espnPromise = fetch('https://site.api.espn.com/apis/site/v2/sports/football/college-football/news?limit=50')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        return (data.articles || []).filter(function(a) {
+          var t = (a.headline || '') + ' ' + (a.description || '');
+          return t.toLowerCase().indexOf('clemson') !== -1;
+        }).map(function(a) {
+          return { source: 'ESPN', headline: a.headline, description: a.description, link: (a.links && a.links.web && a.links.web.href) || '#' };
+        });
+      })
+      .catch(function() { return null; }); // null = ESPN failed (vs [] = ESPN ok, just empty)
+
+    var tigerNetPromise = Promise.all([
+      fetchTigerNetFeed(TIGERNET_FEEDS.featured),
+      fetchTigerNetFeed(TIGERNET_FEEDS.updates)
+    ]).then(function(results) {
+      var seen = {};
+      var merged = [];
+      results[0].concat(results[1]).forEach(function(it) {
+        if (seen[it.link]) return;
+        seen[it.link] = true;
+        merged.push(it);
+      });
+      return merged;
+    });
+
+    Promise.all([tigerNetPromise, espnPromise]).then(function(pair) {
+      var tigerItems = pair[0] || [];
+      var espnItems = pair[1];
+      var all = tigerItems.concat(espnItems || []);
+      if (all.length === 0) {
+        var espnFailed = espnItems === null;
+        list.innerHTML = '<div class="placeholder">' +
+          (espnFailed ? 'Couldn\'t reach ESPN or TigerNet right now.' : 'No Clemson headlines from ESPN or TigerNet right now.') +
+          ' Try refreshing later, or check <a href="https://www.tigernet.com/clemson-football" target="_blank">TigerNet</a> directly.</div>';
+        setStatus(espnItems !== null, espnFailed ? 'Update failed' : 'Updated ' + timeAgo());
+        return;
+      }
+      list.innerHTML = '';
+      all.forEach(function(item) { list.appendChild(buildNewsCard(item)); });
+      setStatus(true, 'Updated ' + timeAgo());
+    });
+  }
+
+  /* ---------- Clemson schedule ---------- */
+  var clemsonScheduleCache = null;
+  function loadClemsonSchedule(forceRefresh) {
+    var list = document.getElementById('clemson-schedule-list');
+    if (clemsonScheduleCache && !forceRefresh) { renderClemsonSchedule(list, clemsonScheduleCache); return; }
+    list.innerHTML = '<div class="placeholder">Loading Clemson\'s schedule...</div>';
+    fetch('https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams/' + CLEMSON_ID + '/schedule')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        clemsonScheduleCache = data.events || [];
+        renderClemsonSchedule(list, clemsonScheduleCache);
+      })
+      .catch(function() {
+        list.innerHTML = '<div class="placeholder">Couldn\'t load the schedule right now. Tap refresh to try again.</div>';
+      });
+  }
+  function renderClemsonSchedule(list, events) {
+    if (!events || events.length === 0) {
+      list.innerHTML = '<div class="placeholder">Schedule isn\'t posted yet.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    events.forEach(function(ev) {
+      if (!ev.competitions || !ev.competitions[0]) return;
+      // Tap any game below for full detail: win probability, team totals, QB/RB/WR-style
+      // player stats, and full play-by-play, same as the other scoreboard tabs.
+      list.appendChild(buildGameCard(ev, 'college-football'));
+    });
+  }
+
+  /* ---------- Clemson sub-tabs ---------- */
+  var CLEMSON_ID = '228';
+  var clemsonLazy = {};
+  function switchClemsonSubtab(name) {
+    document.querySelectorAll('#panel-clemson .subtab').forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-subtab') === name); });
+    document.querySelectorAll('#panel-clemson .subpanel').forEach(function(p) { p.classList.remove('active'); });
+    document.getElementById('subpanel-' + name).classList.add('active');
+    if (!clemsonLazy[name]) {
+      clemsonLazy[name] = true;
+      if (name === 'portal') loadRecruiting();
+      if (name === 'roster') loadRoster();
+    }
+  }
+
+  /* ---------- Clemson recruiting / transfer portal ---------- */
+  function loadRecruiting() {
+    var list = document.getElementById('recruiting-list');
+    list.innerHTML = '<div class="placeholder">Loading recruiting &amp; transfer portal news...</div>';
+    var portalKw = ['recruit', 'commit', 'transfer portal', 'signing day', 'nil', 'flip'];
+    var espnPromise = fetch('https://site.api.espn.com/apis/site/v2/sports/football/college-football/news?limit=50')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        return (data.articles || []).filter(function(a) {
+          var t = ((a.headline || '') + ' ' + (a.description || '')).toLowerCase();
+          if (t.indexOf('clemson') === -1) return false;
+          return portalKw.some(function(k) { return t.indexOf(k) !== -1; });
+        }).map(function(a) {
+          return { source: 'ESPN', headline: a.headline, description: a.description, link: (a.links && a.links.web && a.links.web.href) || '#' };
+        });
+      })
+      .catch(function() { return null; });
+
+    var tigerNetPromise = fetchTigerNetFeed(TIGERNET_FEEDS.recruiting);
+
+    Promise.all([tigerNetPromise, espnPromise]).then(function(pair) {
+      var tigerItems = pair[0] || [];
+      var espnItems = pair[1];
+      var all = tigerItems.concat(espnItems || []);
+      if (all.length === 0) {
+        var espnFailed = espnItems === null;
+        list.innerHTML = '<div class="placeholder">' +
+          (espnFailed ? 'Couldn\'t reach ESPN or TigerNet right now.' : 'No Clemson recruiting or transfer portal headlines from ESPN or TigerNet right now.') +
+          ' Try <a href="https://www.on3.com/teams/clemson-tigers/football/recruiting/" target="_blank">On3</a> or <a href="https://www.tigernet.com/clemson-football" target="_blank">TigerNet</a> directly.</div>';
+        return;
+      }
+      list.innerHTML = '';
+      all.forEach(function(item) { list.appendChild(buildNewsCard(item)); });
+    });
+  }
+
+  /* ---------- Clemson depth chart ---------- */
+  var rosterCache = null;
+  function loadRoster(forceRefresh) {
+    var list = document.getElementById('roster-list');
+    if (rosterCache && !forceRefresh) { renderRosterList(); return; }
+    list.innerHTML = '<div class="placeholder">Loading roster...</div>';
+    // Same endpoint already proven reliable for the Coaches tab (its "coach" field works) —
+    // this reads the sibling "athletes" field for the full roster instead.
+    fetch('https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams/' + CLEMSON_ID + '/roster')
+      .then(function(r) { if (!r.ok) throw new Error('bad response ' + r.status); return r.json(); })
+      .then(function(data) {
+        rosterCache = normalizeRosterAthletes(data.athletes);
+        if (rosterCache.length === 0) {
+          list.innerHTML = '<div class="placeholder">Roster isn\'t posted yet for this team.</div>';
+          return;
+        }
+        renderRosterList();
+      })
+      .catch(function() {
+        list.innerHTML = '<div class="placeholder">Couldn\'t load the roster right now. Tap refresh to try again.</div>';
+      });
+  }
+  function normalizeRosterAthletes(athletes) {
+    if (!athletes) return [];
+    // ESPN's roster "athletes" field is commonly grouped by unit, e.g.
+    // [{ position: "offense", items: [...] }, { position: "defense", items: [...] }, ...] —
+    // but handle a plain flat array too, just in case.
+    if (Array.isArray(athletes) && athletes.length > 0 && Array.isArray(athletes[0].items)) {
+      var flat = [];
+      athletes.forEach(function(group) {
+        (group.items || []).forEach(function(a) {
+          flat.push({ athlete: a, groupLabel: group.position || group.displayName || '' });
+        });
+      });
+      return flat;
+    }
+    if (Array.isArray(athletes)) {
+      return athletes.map(function(a) { return { athlete: a, groupLabel: '' }; });
+    }
+    return [];
+  }
+  function renderRosterList() {
+    var list = document.getElementById('roster-list');
+    if (!rosterCache) return;
+    var q = (document.getElementById('roster-search').value || '').toLowerCase().trim();
+    var filtered = rosterCache.filter(function(entry) {
+      var a = entry.athlete;
+      var name = a.fullName || a.displayName || '';
+      return !q || name.toLowerCase().indexOf(q) !== -1;
+    });
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="placeholder">No players match that search.</div>';
+      return;
+    }
+    // Group by position group label if present, else by the athlete's own position abbreviation.
+    var groups = {};
+    var order = [];
+    filtered.forEach(function(entry) {
+      var a = entry.athlete;
+      var groupKey = entry.groupLabel || (a.position && (a.position.displayName || a.position.abbreviation)) || 'Roster';
+      groupKey = groupKey.charAt(0).toUpperCase() + groupKey.slice(1);
+      if (!groups[groupKey]) { groups[groupKey] = []; order.push(groupKey); }
+      groups[groupKey].push(a);
+    });
+    list.innerHTML = '';
+    order.forEach(function(groupKey) {
+      var title = document.createElement('div');
+      title.className = 'depth-pos-title';
+      title.textContent = groupKey;
+      list.appendChild(title);
+      groups[groupKey].forEach(function(a) {
+        var name = a.fullName || a.displayName || 'Unknown';
+        var jersey = a.jersey ? '#' + a.jersey : '';
+        var pos = (a.position && (a.position.abbreviation || a.position.displayName)) || '';
+        var hw = [a.displayHeight, a.displayWeight].filter(Boolean).join(', ');
+        var cls = a.experience && a.experience.displayValue;
+        var sub = [jersey, pos, hw, cls].filter(Boolean).join(' \u00b7 ');
+        var card = document.createElement('div');
+        card.className = 'injury-card';
+        card.innerHTML = '<div class="injury-name">' + escapeHtml(name) + '</div>' +
+          (sub ? '<div class="injury-detail">' + escapeHtml(sub) + '</div>' : '');
+        list.appendChild(card);
+      });
+    });
+  }
+
+  function statusLabel(comp) {
+    var st = comp.status.type;
+    if (st.state === 'in') {
+      return { text: (comp.status.period ? 'Q' + comp.status.period + ' \u00b7 ' : '') + (st.shortDetail || 'Live'), live: true };
+    }
+    if (st.state === 'post') {
+      return { text: 'Final' + (st.detail && st.detail.indexOf('OT') !== -1 ? ' (OT)' : ''), live: false };
+    }
+    if (comp.timeValid === false) {
+      // Kickoff time hasn't been announced yet, but the date itself is still known and
+      // accurate. ESPN's shortDetail/detail text fields are inconsistent about whether
+      // they include that date alongside "TBD" (sometimes just "TBD" with no date at
+      // all), so build the label from the event's own date instead of trusting that text.
+      var d = new Date(comp.date);
+      var dateStr = isNaN(d.getTime()) ? '' : d.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
+      return { text: (dateStr ? dateStr + ' - ' : '') + 'TBD', live: false };
+    }
+    return { text: st.shortDetail || 'Scheduled', live: false };
+  }
+
+  function teamLogoImg(team, size, sport) {
+    if (!team) return '';
+    var src = team.logo;
+    if (!src && team.id) {
+      // Some ESPN endpoints (confirmed: team schedules) omit the logo URL even though the
+      // team ID is present — same underlying issue as the earlier [object Object] score bug,
+      // where the schedule endpoint returns leaner team data than the scoreboard endpoint.
+      // Construct it directly from ESPN's own CDN pattern instead, confirmed live earlier
+      // (college-football uses the numeric team ID; NFL uses the lowercase abbreviation).
+      if (sport === 'nfl' && team.abbreviation) {
+        src = 'https://a.espncdn.com/i/teamlogos/nfl/500/' + team.abbreviation.toLowerCase() + '.png';
+      } else {
+        src = 'https://a.espncdn.com/i/teamlogos/ncaa/500/' + team.id + '.png';
+      }
+    }
+    if (!src) return '';
+    return '<img src="' + src + '" alt="" class="team-logo" width="' + size + '" height="' + size + '" onerror="this.style.display=\'none\'">';
+  }
+
+  function scoreDisplayValue(score) {
+    // The scoreboard endpoint returns score as a plain string/number, but the
+    // /teams/{id}/schedule endpoint returns it as {value, displayValue}. Handle both.
+    if (score === undefined || score === null) return '';
+    if (typeof score === 'object') return score.displayValue || score.value || '';
+    return score;
+  }
+
+  function teamRecordSummary(competitor) {
+    var records = competitor.records;
+    if (!records || records.length === 0) return '';
+    var overall = records.filter(function(r) { return r.type === 'total' || r.name === 'overall'; })[0] || records[0];
+    return overall && overall.summary ? overall.summary : '';
+  }
+
+  var statCache = {};
+  var scoreboardData = { 'college-football': [], nfl: [] };
+
+  function renderScoreboard(listEl, sport, events, emptyMsg) {
+    if (events.length === 0) {
+      listEl.innerHTML = '<div class="placeholder">' + emptyMsg + '</div>';
+      return;
+    }
+    var favNames = getFavorites().map(function(f) { return f.name; });
+    var favEvents = events.filter(function(ev) {
+      var comp = ev.competitions[0];
+      return comp.competitors.some(function(c) { return favNames.indexOf(c.team.shortDisplayName) !== -1; });
+    });
+
+    var byConf = {};
+    events.forEach(function(ev) {
+      var comp = ev.competitions[0];
+      var conf = (sport === 'nfl') ? 'NFL' : (canonicalConfName(comp.groups && comp.groups.name) || 'Other');
+      if (!byConf[conf]) byConf[conf] = [];
+      byConf[conf].push(ev);
+    });
+
+    listEl.innerHTML = '';
+
+    if (favEvents.length > 0) {
+      var favSection = document.createElement('div');
+      favSection.className = 'fav-section';
+      var favHead = document.createElement('div');
+      favHead.className = 'fav-header';
+      favHead.innerHTML = '&#9733; Your favorites';
+      favSection.appendChild(favHead);
+      favEvents.forEach(function(ev) { favSection.appendChild(buildGameCard(ev, sport)); });
+      listEl.appendChild(favSection);
+    }
+
+    Object.keys(byConf).sort().forEach(function(conf) {
+      var group = document.createElement('div');
+      group.className = 'conf-group';
+      group.setAttribute('data-conf', conf);
+      var label = document.createElement('div');
+      label.className = 'conf-name';
+      label.textContent = conf;
+      group.appendChild(label);
+      byConf[conf].forEach(function(ev) { group.appendChild(buildGameCard(ev, sport)); });
+      listEl.appendChild(group);
+    });
+  }
+
+  function buildGameCard(ev, sport) {
+    var comp = ev.competitions[0];
+    var sl = statusLabel(comp);
+    var teams = comp.competitors.slice().sort(function(a, b) { return a.homeAway === 'home' ? 1 : -1; });
+
+    var card = document.createElement('div');
+    card.className = 'game-card clickable';
+    card.setAttribute('data-teams', teams.map(function(t) { return t.team.shortDisplayName.toLowerCase(); }).join(' '));
+
+    var meta = document.createElement('div');
+    meta.className = 'game-meta' + (sl.live ? ' live' : '');
+    meta.textContent = sl.text;
+    card.appendChild(meta);
+
+    teams.forEach(function(t) {
+      var row = document.createElement('div');
+      row.className = 'team-line';
+
+      var left = document.createElement('div');
+      left.className = 'team-left';
+
+      var star = document.createElement('span');
+      star.className = 'star-btn' + (isFavorite(t.team.shortDisplayName) ? ' favorited' : '');
+      star.innerHTML = isFavorite(t.team.shortDisplayName) ? '&#9733;' : '&#9734;';
+      star.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleFavorite({ name: t.team.shortDisplayName, id: t.team.id, sport: sport });
+        star.classList.toggle('favorited');
+        star.innerHTML = star.classList.contains('favorited') ? '&#9733;' : '&#9734;';
+      });
+      left.appendChild(star);
+
+      if (sport === 'college-football' && t.curatedRank && t.curatedRank.current && t.curatedRank.current <= 25) {
+        var rankChip = document.createElement('span');
+        rankChip.className = 'rank-chip';
+        rankChip.textContent = '#' + t.curatedRank.current;
+        left.appendChild(rankChip);
+      }
+
+      var logoHtml = teamLogoImg(t.team, 22, sport);
+      if (logoHtml) {
+        var logoWrap = document.createElement('span');
+        logoWrap.innerHTML = logoHtml;
+        left.appendChild(logoWrap.firstChild);
+      }
+
+      var name = document.createElement('span');
+      name.className = 'team-name deepdive';
+      name.textContent = t.team.shortDisplayName + (t.homeAway === 'away' ? ' (away)' : '');
+      name.addEventListener('click', function(e) {
+        e.stopPropagation();
+        openTeamSchedule(sport, t.team.id, t.team.displayName || t.team.shortDisplayName);
+      });
+      left.appendChild(name);
+
+      var recordText = teamRecordSummary(t);
+      if (recordText) {
+        var rec = document.createElement('span');
+        rec.className = 'team-record';
+        rec.textContent = '(' + recordText + ')';
+        left.appendChild(rec);
+      }
+
+      row.appendChild(left);
+
+      var score = document.createElement('span');
+      score.className = 'team-score';
+      score.textContent = (t.score !== undefined && sl.text !== 'Scheduled') ? scoreDisplayValue(t.score) : '';
+      row.appendChild(score);
+
+      card.appendChild(row);
+    });
+
+    if (comp.odds && comp.odds.length > 0) {
+      var odds = comp.odds[0];
+      var oddsLine = document.createElement('div');
+      oddsLine.className = 'odds-line';
+      var parts = [];
+      if (odds.details) parts.push('Spread: ' + odds.details);
+      if (odds.overUnder) parts.push('O/U ' + odds.overUnder);
+      if (parts.length > 0) {
+        oddsLine.textContent = parts.join(' \u00b7 ');
+        card.appendChild(oddsLine);
+      }
+    }
+
+    var hint = document.createElement('div');
+    hint.className = 'tap-hint';
+    hint.textContent = 'Tap for full stats';
+    card.appendChild(hint);
+
+    var detail = document.createElement('div');
+    detail.className = 'detail-panel';
+    detail.style.display = 'none';
+    card.appendChild(detail);
+
+    card.addEventListener('click', function() {
+      var open = detail.style.display === 'block';
+      if (open) {
+        detail.style.display = 'none';
+        hint.textContent = 'Tap for full stats';
+        return;
+      }
+      detail.style.display = 'block';
+      hint.textContent = 'Tap to hide';
+      loadGameStats(sport, ev.id, detail, teams, ev.date);
+    });
+
+    return card;
+  }
+
+  function openTeamSchedule(sport, teamId, teamName) {
+    var overlay = document.getElementById('team-modal-overlay');
+    var body = document.getElementById('team-modal-body');
+    document.getElementById('team-modal-title').textContent = teamName;
+    document.getElementById('team-modal-sub').textContent = 'Loading...';
+    body.innerHTML = '<div class="placeholder">Loading schedule...</div>';
+    overlay.classList.add('show');
+
+    var base = 'https://site.api.espn.com/apis/site/v2/sports/football/' + sport + '/teams/' + teamId;
+    Promise.all([
+      fetch(base).then(function(r) { return r.json(); }).catch(function() { return null; }),
+      fetch(base + '/schedule').then(function(r) { return r.json(); }).catch(function() { return null; })
+    ]).then(function(results) {
+      // Ignore stale responses if the user already switched to a different team.
+      if (document.getElementById('team-modal-title').textContent !== teamName) return;
+      var teamData = results[0];
+      var schedData = results[1];
+      if (teamData && teamData.team) {
+        var team = teamData.team;
+        var record = (team.record && team.record.items && team.record.items[0]) ? team.record.items[0].summary : '';
+        var standing = team.standingSummary || '';
+        document.getElementById('team-modal-sub').textContent = [record, standing].filter(Boolean).join(' \u00b7 ') || 'Record unavailable';
+        var logoHtml = teamLogoImg(team, 24, sport);
+        if (logoHtml) {
+          document.getElementById('team-modal-title').innerHTML = logoHtml + escapeHtml(teamName);
+        }
+        if (team.color) {
+          applyThemeColors(deriveTeamTheme('#' + team.color, team.alternateColor ? '#' + team.alternateColor : null));
+        }
+      } else {
+        document.getElementById('team-modal-sub').textContent = '';
+      }
+      var events = (schedData && schedData.events) || [];
+      if (events.length === 0) {
+        body.innerHTML = '<div class="placeholder">Schedule isn\'t posted yet for this team.</div>';
+        return;
+      }
+      body.innerHTML = '';
+      events.forEach(function(ev) {
+        if (!ev.competitions || !ev.competitions[0]) return;
+        body.appendChild(buildGameCard(ev, sport));
+      });
+    });
+  }
+  function closeTeamModal() {
+    document.getElementById('team-modal-overlay').classList.remove('show');
+    applyThemeForActiveTab();
+  }
+
+  var PLAYER_STAT_CATEGORIES = [
+    ['passing', 'Passing'], ['rushing', 'Rushing'], ['receiving', 'Receiving'],
+    ['defensive', 'Defense'], ['interceptions', 'Interceptions'],
+    ['kicking', 'Kicking'], ['punting', 'Punting'],
+    ['kickReturns', 'Kick Returns'], ['puntReturns', 'Punt Returns'], ['fumbles', 'Fumbles']
+  ];
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function(c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function buildPlayerStatsHtml(playersData, orderTeams) {
+    if (!playersData || playersData.length === 0) return '';
+    var byTeamId = {};
+    playersData.forEach(function(p) { if (p.team && p.team.id) byTeamId[p.team.id] = p; });
+    var ordered = (orderTeams || []).map(function(t) { return byTeamId[t.team.id]; }).filter(Boolean);
+    if (ordered.length === 0) ordered = playersData;
+
+    var html = '';
+    PLAYER_STAT_CATEGORIES.forEach(function(catPair) {
+      var key = catPair[0], label = catPair[1];
+      var teamBlocks = '';
+      ordered.forEach(function(teamEntry) {
+        var stat = (teamEntry.statistics || []).filter(function(s) { return s.name === key; })[0];
+        if (!stat || !stat.athletes || stat.athletes.length === 0) return;
+        var rows = '';
+        stat.athletes.forEach(function(a) {
+          var nm = (a.athlete && (a.athlete.shortName || a.athlete.displayName)) || 'Unknown';
+          var cells = (a.stats || []).map(function(v) { return '<td>' + escapeHtml(v) + '</td>'; }).join('');
+          rows += '<tr><td>' + escapeHtml(nm) + '</td>' + cells + '</tr>';
+        });
+        var headerCells = (stat.labels || []).map(function(l) { return '<th>' + escapeHtml(l) + '</th>'; }).join('');
+        teamBlocks += '<div class="player-team-label">' + escapeHtml(teamEntry.team.shortDisplayName) + '</div>' +
+          '<div class="player-table-wrap"><table class="player-table"><thead><tr><th>Player</th>' + headerCells +
+          '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+      });
+      if (teamBlocks) html += '<div class="player-cat-title">' + label + '</div>' + teamBlocks;
+    });
+    return html;
+  }
+
+  function buildDrivesHtml(drives) {
+    if (!drives) return '';
+    var list = (drives.previous || []).slice();
+    if (drives.current) list.push(drives.current);
+    if (list.length === 0) return '';
+    var html = '';
+    list.forEach(function(d) {
+      var teamName = (d.team && (d.team.shortDisplayName || d.team.displayName)) || 'Drive';
+      var result = d.displayResult || d.result || '';
+      var summary = d.description || '';
+      html += '<div class="drive-block"><div class="drive-head">' + escapeHtml(teamName) + (result ? ' \u2014 ' + escapeHtml(result) : '') + '</div>';
+      if (summary) html += '<div class="drive-meta">' + escapeHtml(summary) + '</div>';
+      (d.plays || []).forEach(function(p) {
+        if (!p.text) return;
+        html += '<div class="play-row">' + escapeHtml(p.text) + '</div>';
+      });
+      html += '</div>';
+    });
+    return html;
+  }
+
+  // Renders a compact SVG line chart of home win probability over the course of the game,
+  // similar to ESPN's win probability chart — background split at the 50% line tinted with
+  // each team's color, with the probability line itself in the home team's color.
+  /* ---------- Kickoff weather (Open-Meteo, free, no API key) ---------- */
+  var WEATHER_CODES = {
+    0: ['Clear', '\u2600\uFE0F'], 1: ['Mostly clear', '\uD83C\uDF24\uFE0F'], 2: ['Partly cloudy', '\u26C5'], 3: ['Overcast', '\u2601\uFE0F'],
+    45: ['Fog', '\uD83C\uDF2B\uFE0F'], 48: ['Fog', '\uD83C\uDF2B\uFE0F'],
+    51: ['Light drizzle', '\uD83C\uDF26\uFE0F'], 53: ['Drizzle', '\uD83C\uDF26\uFE0F'], 55: ['Heavy drizzle', '\uD83C\uDF26\uFE0F'],
+    61: ['Light rain', '\uD83C\uDF27\uFE0F'], 63: ['Rain', '\uD83C\uDF27\uFE0F'], 65: ['Heavy rain', '\u26C8\uFE0F'],
+    71: ['Light snow', '\uD83C\uDF28\uFE0F'], 73: ['Snow', '\uD83C\uDF28\uFE0F'], 75: ['Heavy snow', '\u2744\uFE0F'],
+    80: ['Rain showers', '\uD83C\uDF26\uFE0F'], 81: ['Rain showers', '\uD83C\uDF27\uFE0F'], 82: ['Heavy showers', '\u26C8\uFE0F'],
+    95: ['Thunderstorms', '\u26C8\uFE0F']
+  };
+  function weatherCodeInfo(code) { return WEATHER_CODES[code] || ['Weather', '\uD83C\uDF24\uFE0F']; }
+
+  /* ---------- Live drive visualizer (ESPN-style current-drive field diagram) ---------- */
+  function ordinalSuffix(n) {
+    if (n === 1) return '1st'; if (n === 2) return '2nd'; if (n === 3) return '3rd'; return n + 'th';
+  }
+  function buildFieldSvg(currentX, firstDownX, awayColor, homeColor, possTeam) {
+    var W = 400, H = 130;
+    function xPix(pct) { return 20 + (pct / 100) * 360; }
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="field-svg" preserveAspectRatio="xMidYMid meet">';
+    svg += '<rect x="0" y="10" width="20" height="' + (H - 20) + '" fill="' + awayColor + '" opacity="0.85"></rect>';
+    svg += '<rect x="380" y="10" width="20" height="' + (H - 20) + '" fill="' + homeColor + '" opacity="0.85"></rect>';
+    svg += '<rect x="20" y="10" width="360" height="' + (H - 20) + '" fill="var(--subtle-bg)"></rect>';
+    for (var y = 0; y <= 100; y += 10) {
+      var x = xPix(y);
+      svg += '<line x1="' + x + '" y1="10" x2="' + x + '" y2="' + (H - 10) + '" stroke="var(--border)" stroke-width="' + (y === 0 || y === 50 || y === 100 ? 2 : 1) + '"></line>';
+      if (y !== 0 && y !== 100) {
+        var label = y <= 50 ? y : (100 - y);
+        svg += '<text x="' + x + '" y="' + (H - 2) + '" font-size="9" fill="var(--muted)" text-anchor="middle">' + label + '</text>';
+      }
+    }
+    if (firstDownX != null) {
+      var fx = xPix(firstDownX);
+      svg += '<line x1="' + fx + '" y1="10" x2="' + fx + '" y2="' + (H - 10) + '" stroke="#F2C94C" stroke-width="2.5"></line>';
+    }
+    var bx = xPix(currentX), by = H / 2;
+    svg += '<circle cx="' + bx + '" cy="' + by + '" r="13" fill="var(--card)" stroke="var(--text)" stroke-width="1.5"></circle>';
+    if (possTeam && possTeam.team && possTeam.team.logo) {
+      svg += '<image href="' + possTeam.team.logo + '" x="' + (bx - 10) + '" y="' + (by - 10) + '" width="20" height="20"></image>';
+    }
+    svg += '</svg>';
+    return svg;
+  }
+  function buildLiveDriveHtml(data, teams, sport) {
+    var drive = data.drives && data.drives.current;
+    if (!drive || !drive.plays || drive.plays.length === 0) return '';
+    var lastPlay = drive.plays[drive.plays.length - 1];
+    var end = lastPlay.end || {};
+    var possessionText = end.possessionText || '';
+    var down = end.down, distance = end.distance;
+    var downDistanceText = end.shortDownDistanceText || (down && distance != null ? ordinalSuffix(down) + ' & ' + distance : '');
+
+    var awayT = teams[0], homeT = teams[1];
+    var awayAbbr = awayT.team && awayT.team.abbreviation;
+    var awayColor = teamAccentColor(awayT) || 'var(--navy)';
+    var homeColor = teamAccentColor(homeT) || 'var(--gold)';
+
+    var atMidfield = possessionText.trim() === '50';
+    var m = possessionText.match(/^([A-Za-z]+)\s+(\d+)$/);
+    var currentX = 50, possAbbr = null;
+    if (!atMidfield && m) {
+      possAbbr = m[1];
+      var yardNum = parseInt(m[2], 10);
+      currentX = (possAbbr === awayAbbr) ? yardNum : (100 - yardNum);
+    }
+    var isAwayPossession = possAbbr ? (possAbbr === awayAbbr) : null;
+    var firstDownX = null;
+    if (isAwayPossession !== null && distance != null) {
+      firstDownX = isAwayPossession ? currentX + distance : currentX - distance;
+      firstDownX = Math.max(0, Math.min(100, firstDownX));
+    }
+    var possTeam = isAwayPossession === true ? awayT : (isAwayPossession === false ? homeT : null);
+
+    var wp = data.winprobability;
+    var wpHtml = '';
+    if (wp && wp.length > 0) {
+      var last = wp[wp.length - 1];
+      var homePct = Math.round((last.homeWinPercentage != null ? last.homeWinPercentage : 0.5) * 1000) / 10;
+      var favTeam = homePct >= 50 ? homeT : awayT;
+      var favPct = homePct >= 50 ? homePct : Math.round((100 - homePct) * 10) / 10;
+      wpHtml = '<span class="ld-wp">Win %: ' + teamLogoImg(favTeam.team, 16, sport) + favPct.toFixed(1) + '</span>';
+    }
+    var lastPlayHeadline = (lastPlay.type && lastPlay.type.text) || 'Last play';
+
+    return '<div class="live-drive-card">' +
+      '<div class="ld-head"><span class="ld-title">CURRENT DRIVE</span><span class="ld-sub">' + escapeHtml(drive.description || '') + '</span></div>' +
+      '<div class="ld-stats-row"><div><div class="ld-stat-label">Down</div><div class="ld-stat-val">' + escapeHtml(downDistanceText || '\u2013') + '</div></div>' +
+      '<div><div class="ld-stat-label">Ball on</div><div class="ld-stat-val">' + escapeHtml(possessionText || '\u2013') + '</div></div></div>' +
+      buildFieldSvg(currentX, firstDownX, awayColor, homeColor, possTeam) +
+      '<div class="ld-lastplay"><div class="ld-lastplay-top"><span class="ld-lastplay-headline">' + escapeHtml(lastPlayHeadline) + '</span>' + wpHtml + '</div>' +
+      '<div class="ld-lastplay-text">' + escapeHtml(lastPlay.text || '') + '</div></div>' +
+      '</div>';
+  }
+
+  function fetchKickoffWeather(venue, gameDateIso) {
+    if (!venue || venue.indoor || !gameDateIso) return Promise.resolve(null);
+    var city = venue.address && venue.address.city;
+    if (!city) return Promise.resolve(null);
+    var gameDate = new Date(gameDateIso);
+    if (isNaN(gameDate.getTime())) return Promise.resolve(null);
+    var daysOut = (gameDate - new Date()) / 86400000;
+    if (daysOut < -0.5 || daysOut > 15) return Promise.resolve(null); // outside Open-Meteo's free forecast range
+
+    return fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(city) + '&count=1&country=US')
+      .then(function(r) { return r.json(); })
+      .then(function(geo) {
+        var loc = geo.results && geo.results[0];
+        if (!loc) return null;
+        var dateStr = gameDate.toISOString().slice(0, 10);
+        var wxUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + loc.latitude + '&longitude=' + loc.longitude +
+          '&hourly=temperature_2m,precipitation_probability,windspeed_10m,weathercode&temperature_unit=fahrenheit&windspeed_unit=mph&timezone=UTC&start_date=' + dateStr + '&end_date=' + dateStr;
+        return fetch(wxUrl).then(function(r) { return r.json(); }).then(function(wx) {
+          if (!wx.hourly || !wx.hourly.time || wx.hourly.time.length === 0) return null;
+          var targetHour = gameDate.toISOString().slice(0, 13);
+          var idx = wx.hourly.time.findIndex(function(t) { return t.slice(0, 13) === targetHour; });
+          if (idx === -1) idx = Math.min(12, wx.hourly.time.length - 1);
+          return {
+            city: loc.name,
+            temp: wx.hourly.temperature_2m[idx],
+            precip: wx.hourly.precipitation_probability ? wx.hourly.precipitation_probability[idx] : null,
+            wind: wx.hourly.windspeed_10m[idx],
+            code: wx.hourly.weathercode[idx]
+          };
+        });
+      }).catch(function() { return null; });
+  }
+
+  function buildWinProbGraphSvg(wpArray, awayColor, homeColor) {
+    var W = 600, H = 110, PAD = 3;
+    var n = wpArray.length;
+    var pts = wpArray;
+    var maxPoints = 80;
+    if (n > maxPoints) {
+      var step = n / maxPoints;
+      var sampled = [];
+      for (var i = 0; i < maxPoints; i++) sampled.push(wpArray[Math.min(n - 1, Math.floor(i * step))]);
+      if (sampled[sampled.length - 1] !== wpArray[n - 1]) sampled.push(wpArray[n - 1]);
+      pts = sampled;
+    }
+    var count = pts.length;
+    if (count < 2) return '';
+    function xAt(i) { return PAD + (i / (count - 1)) * (W - PAD * 2); }
+    function yAt(pct) { return PAD + (1 - pct / 100) * (H - PAD * 2); }
+    var midY = yAt(50);
+    var linePoints = pts.map(function(p, i) {
+      var raw = p.homeWinPercentage != null ? p.homeWinPercentage : 0.5;
+      var pct = Math.max(0, Math.min(100, Math.round(raw * 100)));
+      return xAt(i).toFixed(1) + ',' + yAt(pct).toFixed(1);
+    }).join(' ');
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" class="wp-graph" preserveAspectRatio="none">' +
+      '<rect x="0" y="0" width="' + W + '" height="' + midY.toFixed(1) + '" fill="' + homeColor + '" opacity="0.14"></rect>' +
+      '<rect x="0" y="' + midY.toFixed(1) + '" width="' + W + '" height="' + (H - midY).toFixed(1) + '" fill="' + awayColor + '" opacity="0.14"></rect>' +
+      '<line x1="0" y1="' + midY.toFixed(1) + '" x2="' + W + '" y2="' + midY.toFixed(1) + '" stroke="var(--muted)" stroke-opacity="0.4" stroke-dasharray="4 4"></line>' +
+      '<polyline points="' + linePoints + '" fill="none" stroke="' + homeColor + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></polyline>' +
+      '</svg>';
+  }
+
+  function loadGameStats(sport, eventId, detailEl, teams, gameDate) {
+    var cacheKey = sport + '-' + eventId;
+    if (statCache[cacheKey]) {
+      detailEl.innerHTML = statCache[cacheKey];
+      return;
+    }
+    detailEl.innerHTML = '<div class="detail-loading">Loading team &amp; player stats...</div>';
+    fetch('https://site.api.espn.com/apis/site/v2/sports/football/' + sport + '/summary?event=' + eventId)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var venue = data.gameInfo && data.gameInfo.venue;
+        var wxId = 'wx-' + cacheKey.replace(/[^a-zA-Z0-9]/g, '');
+        var showWeatherPlaceholder = venue && !venue.indoor;
+        var html = showWeatherPlaceholder ? '<div class="wx-card" id="' + wxId + '"><span class="wx-icon">\uD83C\uDF24\uFE0F</span><div class="wx-info"><div class="wx-temp">Checking kickoff weather...</div></div></div>' : '';
+        html += buildLiveDriveHtml(data, teams, sport);
+        var wp = data.winprobability;
+        var awayT = teams[0], homeT = teams[1];
+        var awayName = (awayT.team && (awayT.team.shortDisplayName || awayT.team.displayName)) || 'Away';
+        var homeName = (homeT.team && (homeT.team.shortDisplayName || homeT.team.displayName)) || 'Home';
+        var awayColor = teamAccentColor(awayT) || 'var(--navy)';
+        var homeColor = teamAccentColor(homeT) || 'var(--gold)';
+
+        if (wp && wp.length >= 2) {
+          // Game has started or finished — show the full win probability graph over time.
+          var lastWp = wp[wp.length - 1];
+          var homePct = Math.round((lastWp.homeWinPercentage != null ? lastWp.homeWinPercentage : 0.5) * 100);
+          var awayPct = 100 - homePct;
+          html += '<div class="wp-wrap"><div class="wp-labels"><span>' + escapeHtml(awayName) + ' ' + awayPct + '%</span><span>' + escapeHtml(homeName) + ' ' + homePct + '%</span></div>' +
+            buildWinProbGraphSvg(wp, awayColor, homeColor) + '</div>';
+        } else if (wp && wp.length === 1) {
+          var onlyWp = wp[0];
+          var homePct1 = Math.round((onlyWp.homeWinPercentage != null ? onlyWp.homeWinPercentage : 0.5) * 100);
+          var awayPct1 = 100 - homePct1;
+          html += '<div class="wp-wrap"><div class="wp-labels"><span>' + escapeHtml(awayName) + ' ' + awayPct1 + '%</span><span>' + escapeHtml(homeName) + ' ' + homePct1 + '%</span></div>' +
+            '<div class="wp-bar"><div class="wp-away" style="width:' + awayPct1 + '%; background:' + awayColor + '"></div><div class="wp-home" style="width:' + homePct1 + '%; background:' + homeColor + '"></div></div></div>';
+        } else if (data.predictor && data.predictor.homeTeam && data.predictor.awayTeam) {
+          // Game hasn't been played yet — show ESPN's pregame Matchup Predictor instead.
+          var homeProj = parseFloat(data.predictor.homeTeam.gameProjection);
+          var awayProj = parseFloat(data.predictor.awayTeam.gameProjection);
+          if (!isNaN(homeProj) && !isNaN(awayProj) && (homeProj + awayProj) > 0) {
+            var hp = Math.round(homeProj), ap = Math.round(awayProj);
+            html += '<div class="wp-wrap"><div class="predictor-title">Matchup Predictor</div><div class="wp-labels"><span>' + escapeHtml(awayName) + ' ' + ap + '%</span><span>' + escapeHtml(homeName) + ' ' + hp + '%</span></div>' +
+              '<div class="wp-bar"><div class="wp-away" style="width:' + ap + '%; background:' + awayColor + '"></div><div class="wp-home" style="width:' + hp + '%; background:' + homeColor + '"></div></div></div>';
+          }
+        }
+        var box = data.boxscore;
+        var haveTeamTotals = box && box.teams && box.teams.length >= 2;
+        if (haveTeamTotals) {
+          var away = box.teams[0], home = box.teams[1];
+          if (away.homeAway === 'home') { var tmp = away; away = home; home = tmp; }
+          html += '<div class="stat-row"><span class="val away-val">' + away.team.shortDisplayName + '</span><span class="label"></span><span class="val home-val">' + home.team.shortDisplayName + '</span></div>';
+          var awayStats = {}; (away.statistics || []).forEach(function(s) { awayStats[s.name] = s.displayValue; });
+          var homeStats = {}; (home.statistics || []).forEach(function(s) { homeStats[s.name] = s.displayValue; });
+          var order = [
+            ['totalYards', 'Total yards'], ['netPassingYards', 'Pass yards'], ['rushingYards', 'Rush yards'],
+            ['turnovers', 'Turnovers'], ['possessionTime', 'Time of poss.'], ['thirdDownEff', '3rd down'], ['totalPenaltiesYards', 'Penalties']
+          ];
+          var any = false;
+          order.forEach(function(pair) {
+            var key = pair[0], label = pair[1];
+            if (awayStats[key] === undefined && homeStats[key] === undefined) return;
+            any = true;
+            html += '<div class="stat-row"><span class="val away-val">' + (awayStats[key] || '-') + '</span><span class="label">' + label + '</span><span class="val home-val">' + (homeStats[key] || '-') + '</span></div>';
+          });
+          if (!any) html += '<div class="detail-loading">Team totals not posted yet for this game.</div>';
+        } else {
+          html += '<div class="detail-loading">Team totals not available yet for this game.</div>';
+        }
+
+        var playerHtml = buildPlayerStatsHtml(box && box.players, teams);
+        if (playerHtml) {
+          html += '<div class="player-section">' + playerHtml + '</div>';
+        } else if (haveTeamTotals) {
+          html += '<div class="player-section"><div class="detail-loading">Player-by-player stats (QB/RB/WR, etc.) aren\'t posted yet for this game.</div></div>';
+        }
+
+        var drivesHtml = buildDrivesHtml(data.drives);
+        if (drivesHtml) {
+          html += '<details class="pbp-details"><summary class="pbp-summary">Full play-by-play</summary>' + drivesHtml + '</details>';
+        }
+
+        statCache[cacheKey] = html;
+        detailEl.innerHTML = html;
+
+        if (showWeatherPlaceholder) {
+          fetchKickoffWeather(venue, gameDate).then(function(wx) {
+            var target = document.getElementById(wxId);
+            if (!target) return; // card was collapsed/replaced before this resolved
+            if (!wx) {
+              target.parentNode.removeChild(target);
+            } else {
+              var info = weatherCodeInfo(wx.code);
+              target.outerHTML = '<div class="wx-card"><span class="wx-icon">' + info[1] + '</span>' +
+                '<div class="wx-info"><div class="wx-temp">' + Math.round(wx.temp) + '\u00b0F <span class="wx-desc">' + escapeHtml(info[0]) + '</span></div>' +
+                '<div class="wx-sub">' + escapeHtml(wx.city) + ' \u00b7 Wind ' + Math.round(wx.wind) + ' mph' +
+                (wx.precip != null ? ' \u00b7 ' + wx.precip + '% precip' : '') + '</div></div></div>';
+            }
+            statCache[cacheKey] = detailEl.innerHTML;
+          }).catch(function() {
+            var target = document.getElementById(wxId);
+            if (target) target.parentNode.removeChild(target);
+            statCache[cacheKey] = detailEl.innerHTML;
+          });
+        }
+      })
+      .catch(function() {
+        detailEl.innerHTML = '<div class="detail-loading">Couldn\'t load stats for this game.</div>';
+      });
+  }
+
+  /* ---------- FBS week navigation ---------- */
+  var fbsWeeks = [];
+  var fbsWeekIndex = -1; // -1 = not yet resolved; loadScores() fills this in from the default (current) response
+  var fbsCalendarLoaded = false;
+
+  function flattenCalendar(calendar) {
+    var weeks = [];
+    (calendar || []).forEach(function(group) {
+      if (group.entries && group.entries.length) {
+        group.entries.forEach(function(e) {
+          if (!e.startDate || !e.endDate) return; // skip malformed entries rather than create a broken, selectable week
+          var prefix = (group.label && group.label !== 'Regular Season') ? group.label + ': ' : '';
+          weeks.push({ label: prefix + (e.label || e.alternateLabel || ''), startDate: e.startDate, endDate: e.endDate });
+        });
+      } else if (group.startDate && group.endDate) {
+        weeks.push({ label: group.label || '', startDate: group.startDate, endDate: group.endDate });
+      }
+    });
+    return weeks;
+  }
+  function weekDateRangeParam(entry) {
+    if (!entry) return '';
+    var start = new Date(entry.startDate);
+    var end = new Date(entry.endDate);
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return ''; // fall back to default (current week) rather than send a garbage date to ESPN
+    return '&dates=' + fmtDate(start) + '-' + fmtDate(end);
+  }
+  function populateFbsWeekSelect() {
+    var select = document.getElementById('fbs-week-select');
+    select.innerHTML = '';
+    fbsWeeks.forEach(function(w, i) {
+      var opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = w.label;
+      select.appendChild(opt);
+    });
+    select.value = fbsWeekIndex;
+  }
+  function updateFbsWeekLabel() {
+    var labelEl = document.getElementById('fbs-week-label');
+    var entry = fbsWeeks[fbsWeekIndex];
+    if (!entry) { labelEl.textContent = 'This week'; return; }
+    var opts = { month: 'short', day: 'numeric' };
+    var range = new Date(entry.startDate).toLocaleDateString([], opts) + ' \u2013 ' + new Date(entry.endDate).toLocaleDateString([], opts);
+    labelEl.textContent = entry.label + ' \u00b7 ' + range;
+  }
+  function changeFbsWeek(delta) {
+    if (fbsWeeks.length === 0) return;
+    fbsWeekIndex = Math.max(0, Math.min(fbsWeeks.length - 1, fbsWeekIndex + delta));
+    loadScores(true);
+  }
+  function jumpFbsWeek() {
+    var idx = parseInt(document.getElementById('fbs-week-select').value, 10);
+    if (isNaN(idx)) return;
+    fbsWeekIndex = idx;
+    loadScores(true);
+  }
+
+  function loadScores(forceRefresh) {
+    var listEl = document.getElementById('scores-list');
+    listEl.innerHTML = '<div class="placeholder">Loading...</div>';
+    var weekEntry = fbsWeekIndex >= 0 ? fbsWeeks[fbsWeekIndex] : null;
+    var url = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80&limit=300' + weekDateRangeParam(weekEntry);
+    fetch(url)
+      .then(function(r) { if (!r.ok) throw new Error('bad response ' + r.status); return r.json(); })
+      .then(function(data) {
+        var events = data.events || [];
+        scoreboardData['college-football'] = events;
+        populateConfFilter(events);
+        var emptyMsg = weekEntry ? ('No FBS games scheduled for ' + weekEntry.label + '.') : 'No FBS games scheduled right now.';
+        renderScoreboard(listEl, 'college-football', events, emptyMsg);
+        applyFbsFilters();
+        setStatus(true, 'Updated ' + timeAgo());
+
+        if (!fbsCalendarLoaded && data.leagues && data.leagues[0] && data.leagues[0].calendar) {
+          fbsCalendarLoaded = true;
+          fbsWeeks = flattenCalendar(data.leagues[0].calendar);
+          if (fbsWeekIndex < 0) {
+            var now = new Date();
+            var idx = fbsWeeks.findIndex(function(w) { return new Date(w.startDate) <= now && now <= new Date(w.endDate); });
+            fbsWeekIndex = idx !== -1 ? idx : 0;
+          }
+          populateFbsWeekSelect();
+        }
+        updateFbsWeekLabel();
+      })
+      .catch(function() {
+        listEl.innerHTML = '<div class="placeholder">Couldn\'t reach live scores right now. Check your connection and tap refresh.</div>';
+        setStatus(false, 'Update failed');
+      });
+  }
+
+  /* ---------- NFL week navigation ---------- */
+  var nflWeeks = [];
+  var nflWeekIndex = -1; // -1 = not yet resolved; loadNFL() fills this in from the default (current) response
+  var nflCalendarLoaded = false;
+
+  function populateNflWeekSelect() {
+    var select = document.getElementById('nfl-week-select');
+    select.innerHTML = '';
+    nflWeeks.forEach(function(w, i) {
+      var opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = w.label;
+      select.appendChild(opt);
+    });
+    select.value = nflWeekIndex;
+  }
+  function updateNflWeekLabel() {
+    var labelEl = document.getElementById('nfl-week-label');
+    var entry = nflWeeks[nflWeekIndex];
+    if (!entry) { labelEl.textContent = 'This week'; return; }
+    var opts = { month: 'short', day: 'numeric' };
+    var range = new Date(entry.startDate).toLocaleDateString([], opts) + ' \u2013 ' + new Date(entry.endDate).toLocaleDateString([], opts);
+    labelEl.textContent = entry.label + ' \u00b7 ' + range;
+  }
+  function changeNflWeek(delta) {
+    if (nflWeeks.length === 0) return;
+    nflWeekIndex = Math.max(0, Math.min(nflWeeks.length - 1, nflWeekIndex + delta));
+    loadNFL(true);
+  }
+  function jumpNflWeek() {
+    var idx = parseInt(document.getElementById('nfl-week-select').value, 10);
+    if (isNaN(idx)) return;
+    nflWeekIndex = idx;
+    loadNFL(true);
+  }
+
+  function loadNFL(forceRefresh) {
+    var listEl = document.getElementById('nfl-list');
+    listEl.innerHTML = '<div class="placeholder">Loading...</div>';
+    var weekEntry = nflWeekIndex >= 0 ? nflWeeks[nflWeekIndex] : null;
+    var url = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?limit=200' + weekDateRangeParam(weekEntry);
+    fetch(url)
+      .then(function(r) { if (!r.ok) throw new Error('bad response ' + r.status); return r.json(); })
+      .then(function(data) {
+        var events = data.events || [];
+        scoreboardData.nfl = events;
+        var emptyMsg = weekEntry ? ('No NFL games scheduled for ' + weekEntry.label + '.') : 'No NFL games scheduled right now.';
+        renderScoreboard(listEl, 'nfl', events, emptyMsg);
+        applyNflFilters();
+        setStatus(true, 'Updated ' + timeAgo());
+
+        if (!nflCalendarLoaded && data.leagues && data.leagues[0] && data.leagues[0].calendar) {
+          nflCalendarLoaded = true;
+          nflWeeks = flattenCalendar(data.leagues[0].calendar);
+          if (nflWeekIndex < 0) {
+            var now = new Date();
+            var idx = nflWeeks.findIndex(function(w) { return new Date(w.startDate) <= now && now <= new Date(w.endDate); });
+            nflWeekIndex = idx !== -1 ? idx : 0;
+          }
+          populateNflWeekSelect();
+        }
+        updateNflWeekLabel();
+      })
+      .catch(function() {
+        listEl.innerHTML = '<div class="placeholder">Couldn\'t reach live scores right now. Check your connection and tap refresh.</div>';
+        setStatus(false, 'Update failed');
+      });
+  }
+
+  // ESPN's groups.name field isn't consistent — some weeks/games report "ACC", others
+  // report "Atlantic Coast Conference" for the same conference. Canonicalize to one
+  // label everywhere this field is read, so filtering/grouping/rosters don't fragment.
+  var CONF_CANONICAL = {
+    'acc': 'ACC', 'atlantic coast conference': 'ACC',
+    'american': 'American Athletic', 'american athletic': 'American Athletic',
+    'american athletic conference': 'American Athletic', 'american conference': 'American Athletic',
+    'big 12': 'Big 12', 'big 12 conference': 'Big 12',
+    'big ten': 'Big Ten', 'big ten conference': 'Big Ten',
+    'conference usa': 'Conference USA', 'cusa': 'Conference USA',
+    'mid-american': 'Mid-American', 'mid-american conference': 'Mid-American', 'mac': 'Mid-American',
+    'mountain west': 'Mountain West', 'mountain west conference': 'Mountain West',
+    'pac-12': 'Pac-12', 'pac-12 conference': 'Pac-12',
+    'sec': 'SEC', 'southeastern conference': 'SEC',
+    'sun belt': 'Sun Belt', 'sun belt conference': 'Sun Belt',
+    'fbs independents': 'FBS Independents', 'independents': 'FBS Independents', 'fbs indep': 'FBS Independents'
+  };
+  function canonicalConfName(name) {
+    if (!name) return null;
+    return CONF_CANONICAL[name.toLowerCase().trim()] || name;
+  }
+
+  var ALL_FBS_CONFERENCES = [
+    'ACC', 'American Athletic', 'Big 12', 'Big Ten', 'Conference USA',
+    'Mid-American', 'Mountain West', 'Pac-12', 'SEC', 'Sun Belt', 'FBS Independents'
+  ];
+  function populateConfFilter(events) {
+    var select = document.getElementById('fbs-conf-filter');
+    var current = select.value;
+    var confs = {};
+    ALL_FBS_CONFERENCES.forEach(function(c) { confs[c] = true; });
+    events.forEach(function(ev) {
+      var conf = canonicalConfName(ev.competitions[0].groups && ev.competitions[0].groups.name) || 'Other';
+      confs[conf] = true;
+    });
+    select.innerHTML = '<option value="">All conferences</option>';
+    Object.keys(confs).sort().forEach(function(c) {
+      var opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      select.appendChild(opt);
+    });
+    select.value = current;
+  }
+
+  /* ---------- Full conference team directory (all teams, not just this week's games) ---------- */
+  // Built by scanning each week of the season individually (same proven per-week
+  // endpoint/pattern as the week selector), rather than one combined wide date-range
+  // request — ESPN's scoreboard endpoint appears to silently return nothing for date
+  // ranges spanning several months, even though single-week ranges work fine.
+  var seasonRosterCache = null;
+  var teamRecordCache = {};
+  function loadSeasonRosters() {
+    if (seasonRosterCache) return Promise.resolve(seasonRosterCache);
+    if (!fbsWeeks || fbsWeeks.length === 0) {
+      return Promise.reject(new Error('Week calendar not loaded yet'));
+    }
+    // Regular-season weeks are enough to establish every team's conference membership;
+    // skip preseason/bowl/playoff weeks to keep the request count down.
+    var regularWeeks = fbsWeeks.filter(function(w) {
+      return !/bowl|playoff|championship|preseason/i.test(w.label);
+    });
+    var weeksToScan = regularWeeks.length > 0 ? regularWeeks : fbsWeeks;
+
+    return Promise.all(weeksToScan.map(function(w) {
+      var url = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80&limit=400' + weekDateRangeParam(w);
+      return fetch(url).then(function(r) { return r.json(); }).then(function(data) { return data.events || []; }).catch(function() { return []; });
+    })).then(function(weekResults) {
+      var byConf = {};
+      weekResults.forEach(function(events) {
+        events.forEach(function(ev) {
+          var comp = ev.competitions && ev.competitions[0];
+          if (!comp) return;
+          var conf = canonicalConfName(comp.groups && comp.groups.name);
+          if (!conf) return;
+          if (!byConf[conf]) byConf[conf] = {};
+          (comp.competitors || []).forEach(function(c) {
+            if (c.team && c.team.id) byConf[conf][c.team.id] = c.team;
+          });
+        });
+      });
+      var result = {};
+      Object.keys(byConf).forEach(function(conf) {
+        result[conf] = Object.keys(byConf[conf]).map(function(id) { return byConf[conf][id]; });
+      });
+      seasonRosterCache = result;
+      return result;
+    });
+  }
+
+  /* ---------- Coaches tab ---------- */
+  var coachSport = 'college-football';
+  var cfbTeamPoolCache = null;
+  var nflTeamPoolCache = null;
+  function loadAllCfbTeams() {
+    if (cfbTeamPoolCache) return Promise.resolve(cfbTeamPoolCache);
+    return loadSeasonRosters().then(function(rosters) {
+      var byId = {};
+      Object.keys(rosters).forEach(function(conf) {
+        rosters[conf].forEach(function(t) { if (t && t.id) byId[t.id] = t; });
+      });
+      cfbTeamPoolCache = Object.keys(byId).map(function(id) { return byId[id]; });
+      return cfbTeamPoolCache;
+    });
+  }
+  function loadAllNflTeams() {
+    if (nflTeamPoolCache) return Promise.resolve(nflTeamPoolCache);
+    // Sample several ~10-day windows spread across the season so a team on bye in any
+    // single week still gets picked up in another sample.
+    var now = new Date();
+    var startYear = now.getMonth() >= 5 ? now.getFullYear() : now.getFullYear() - 1;
+    var start = new Date(Date.UTC(startYear, 7, 1)); // Aug 1
+    var ranges = [];
+    for (var i = 0; i < 7; i++) {
+      var s = new Date(start.getTime() + i * 30 * 86400000);
+      var e = new Date(s.getTime() + 10 * 86400000);
+      ranges.push(fmtDate(s) + '-' + fmtDate(e));
+    }
+    return Promise.all(ranges.map(function(range) {
+      return fetch('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?limit=100&dates=' + range)
+        .then(function(r) { return r.json(); })
+        .then(function(data) { return data.events || []; })
+        .catch(function() { return []; });
+    })).then(function(weekResults) {
+      var byId = {};
+      weekResults.forEach(function(events) {
+        events.forEach(function(ev) {
+          var comp = ev.competitions && ev.competitions[0];
+          if (!comp) return;
+          (comp.competitors || []).forEach(function(c) {
+            if (c.team && c.team.id) byId[c.team.id] = c.team;
+          });
+        });
+      });
+      nflTeamPoolCache = Object.keys(byId).map(function(id) { return byId[id]; });
+      return nflTeamPoolCache;
+    });
+  }
+  function switchCoachSport(sport) {
+    coachSport = sport;
+    document.querySelectorAll('[data-coach-sport]').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-coach-sport') === sport);
+    });
+    renderCoachTeamList();
+  }
+  function renderCoachTeamList() {
+    var listEl = document.getElementById('coaches-list');
+    var loader = coachSport === 'nfl' ? loadAllNflTeams() : loadAllCfbTeams();
+    listEl.innerHTML = '<div class="placeholder">Loading teams...</div>';
+    loader.then(function(teams) {
+      var q = (document.getElementById('coach-search').value || '').toLowerCase().trim();
+      var filtered = teams.filter(function(t) {
+        var name = (t.displayName || t.shortDisplayName || '').toLowerCase();
+        return !q || name.indexOf(q) !== -1;
+      }).sort(function(a, b) {
+        return (a.displayName || '').localeCompare(b.displayName || '');
+      });
+      if (filtered.length === 0) {
+        listEl.innerHTML = '<div class="placeholder">No teams match that search.</div>';
+        return;
+      }
+      listEl.innerHTML = '';
+      filtered.forEach(function(team) {
+        var row = document.createElement('div');
+        row.className = 'conf-team-card';
+        row.style.cursor = 'pointer';
+        var nameSpan = document.createElement('span');
+        nameSpan.className = 'conf-team-name';
+        nameSpan.innerHTML = teamLogoImg(team, 20, coachSport) + escapeHtml(team.displayName || team.shortDisplayName || 'Unknown');
+        row.appendChild(nameSpan);
+        var chevron = document.createElement('span');
+        chevron.style.color = 'var(--muted)';
+        chevron.textContent = '\u203A';
+        row.appendChild(chevron);
+
+        var detail = document.createElement('div');
+        detail.style.display = 'none';
+        detail.style.marginTop = '0.5rem';
+
+        row.addEventListener('click', function() {
+          var open = detail.style.display === 'block';
+          detail.style.display = open ? 'none' : 'block';
+          if (!open && !detail.getAttribute('data-loaded')) {
+            detail.setAttribute('data-loaded', '1');
+            loadCoachInfo(coachSport, team.id, team.displayName || team.shortDisplayName, detail);
+          }
+        });
+
+        var wrap = document.createElement('div');
+        wrap.style.marginBottom = '0.6rem';
+        wrap.appendChild(row);
+        wrap.appendChild(detail);
+        listEl.appendChild(wrap);
+      });
+    }).catch(function() {
+      listEl.innerHTML = '<div class="placeholder">Couldn\'t load the team list right now. Tap refresh scores elsewhere in the app, then reopen this tab.</div>';
+    });
+  }
+  function loadCoachInfo(sport, teamId, teamName, container) {
+    container.innerHTML = '<div class="detail-loading">Loading coaching staff...</div>';
+    fetch('https://site.api.espn.com/apis/site/v2/sports/football/' + sport + '/teams/' + teamId + '/roster')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        // ESPN sometimes hasn't finished populating a team's roster data for the new season
+        // yet (especially true in the preseason) — that can show up either as no coach entry
+        // at all, or as an entry whose name is literally the placeholder text "TBD". Treat
+        // both the same way rather than displaying "TBD" as if it were someone's real name.
+        var coaches = (data.coach || []).filter(function(c) {
+          var name = [c.firstName, c.lastName].filter(Boolean).join(' ').trim();
+          return name && name.toUpperCase() !== 'TBD';
+        });
+        if (coaches.length === 0) {
+          container.innerHTML = '<div class="placeholder">ESPN hasn\'t posted a head coach for this team yet \u2014 common early in the preseason before rosters are fully updated. Check back later in the season.</div>';
+          return;
+        }
+        container.innerHTML = '';
+        coaches.forEach(function(c) {
+          var name = [c.firstName, c.lastName].filter(Boolean).join(' ') || 'Unknown';
+          var card = document.createElement('div');
+          card.className = 'injury-card';
+          card.innerHTML = '<div class="injury-name">' + escapeHtml(name) + ' <span style="color:var(--muted); font-weight:500; font-size:0.72rem;">Head Coach</span></div>';
+          container.appendChild(card);
+        });
+      })
+      .catch(function() {
+        container.innerHTML = '<div class="placeholder">Couldn\'t load coaching info for this team right now.</div>';
+      });
+  }
+
+  /* ---------- Leaders tab (season statistical leaders) ---------- */
+  var LEADERS_CATEGORIES = [
+    ['passingYards', 'Passing Yds'],
+    ['passingTouchdowns', 'Passing TDs'],
+    ['rushingYards', 'Rushing Yds'],
+    ['receivingYards', 'Receiving Yds'],
+    ['sacks', 'Sacks'],
+    ['interceptions', 'Interceptions']
+  ];
+  var leadersSport = 'college-football';
+  var leadersCategory = 'passingYards';
+  var leadersRawCache = {}; // sport -> raw top-level leaders response, cached once per sport per session
+
+  function renderLeadersCategoryPills() {
+    var container = document.getElementById('leaders-category-pills');
+    container.innerHTML = '';
+    LEADERS_CATEGORIES.forEach(function(pair) {
+      var btn = document.createElement('button');
+      btn.className = 'poll-btn' + (pair[0] === leadersCategory ? ' active' : '');
+      btn.textContent = pair[1];
+      btn.style.flex = 'none';
+      btn.addEventListener('click', function() {
+        leadersCategory = pair[0];
+        renderLeadersCategoryPills();
+        loadLeaders();
+      });
+      container.appendChild(btn);
+    });
+  }
+  function switchLeadersSport(sport) {
+    leadersSport = sport;
+    document.querySelectorAll('[data-leaders-sport]').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-leaders-sport') === sport);
+    });
+    loadLeaders();
+  }
+  function fetchLeadersRaw(sport) {
+    if (leadersRawCache[sport]) return Promise.resolve(leadersRawCache[sport]);
+    var now = new Date();
+    var season = now.getMonth() >= 5 ? now.getFullYear() : now.getFullYear() - 1;
+    var url = 'https://sports.core.api.espn.com/v2/sports/football/leagues/' + sport + '/seasons/' + season + '/types/2/leaders';
+    return fetch(url).then(function(r) { return r.json(); }).then(function(data) {
+      leadersRawCache[sport] = data;
+      return data;
+    });
+  }
+  // Every hop below defensively handles two possible shapes: an embedded object, or a
+  // {$ref} link needing a follow-up fetch — since I couldn't verify live which this
+  // endpoint actually returns, matching the pattern already proven necessary for injuries.
+  function resolveLeaderEntry(entry) {
+    var displayValue = entry.displayValue || (entry.value != null ? String(entry.value) : '');
+    var athletePromise = (entry.athlete && entry.athlete.$ref)
+      ? fetch(entry.athlete.$ref).then(function(r) { return r.json(); }).catch(function() { return null; })
+      : Promise.resolve(entry.athlete || null);
+    return athletePromise.then(function(athlete) {
+      var name = athlete ? (athlete.displayName || [athlete.firstName, athlete.lastName].filter(Boolean).join(' ')) : (entry.displayName || 'Unknown player');
+      var teamRef = (athlete && athlete.team && athlete.team.$ref) || (entry.team && entry.team.$ref);
+      var teamEmbedded = (entry.team && !entry.team.$ref) ? entry.team : null;
+      if (teamRef) {
+        return fetch(teamRef).then(function(r) { return r.json(); }).then(function(teamData) {
+          return { name: name, displayValue: displayValue, teamName: teamData.abbreviation || teamData.displayName || null, teamLogo: (teamData.logos && teamData.logos[0] && teamData.logos[0].href) || null };
+        }).catch(function() {
+          return { name: name, displayValue: displayValue, teamName: null, teamLogo: null };
+        });
+      }
+      if (teamEmbedded) {
+        return { name: name, displayValue: displayValue, teamName: teamEmbedded.abbreviation || teamEmbedded.displayName || null, teamLogo: teamEmbedded.logo || (teamEmbedded.logos && teamEmbedded.logos[0] && teamEmbedded.logos[0].href) || null };
+      }
+      return { name: name, displayValue: displayValue, teamName: null, teamLogo: null };
+    });
+  }
+  function fetchLeadersCategory(sport, categoryName) {
+    return fetchLeadersRaw(sport).then(function(data) {
+      var categories = data.categories || data.items || [];
+      var catEntry = categories.filter(function(c) { return c.name === categoryName || (c.$ref && c.$ref.indexOf(categoryName) !== -1); })[0];
+      if (!catEntry) return [];
+      var catPromise = catEntry.$ref ? fetch(catEntry.$ref).then(function(r) { return r.json(); }) : Promise.resolve(catEntry);
+      return catPromise.then(function(cat) {
+        var leaders = cat.leaders || [];
+        return Promise.all(leaders.slice(0, 25).map(function(entry) {
+          var entryPromise = entry.$ref ? fetch(entry.$ref).then(function(r) { return r.json(); }) : Promise.resolve(entry);
+          return entryPromise.then(function(leaderData) { return resolveLeaderEntry(leaderData); }).catch(function() { return null; });
+        }));
+      }).then(function(rows) { return rows.filter(Boolean); });
+    });
+  }
+  function loadLeaders() {
+    var listEl = document.getElementById('leaders-list');
+    var sport = leadersSport, category = leadersCategory;
+    listEl.innerHTML = '<div class="placeholder">Loading leaders...</div>';
+    fetchLeadersCategory(sport, category).then(function(rows) {
+      if (sport !== leadersSport || category !== leadersCategory) return; // stale (user switched while loading)
+      if (!rows || rows.length === 0) {
+        listEl.innerHTML = '<div class="placeholder">Couldn\'t find leader data for this category right now \u2014 try a different one, or check back once more of the season has been played.</div>';
+        return;
+      }
+      listEl.innerHTML = '';
+      rows.forEach(function(r, i) {
+        var row = document.createElement('div');
+        row.className = 'conf-team-card';
+        row.innerHTML = '<span class="conf-team-name" style="display:flex; align-items:center;">' +
+          '<span style="width:22px; flex:none; color:var(--muted); font-weight:700; font-family:\'Barlow Condensed\',sans-serif;">' + (i + 1) + '</span>' +
+          (r.teamLogo ? teamLogoImg({ logo: r.teamLogo }, 18) : '') + escapeHtml(r.name) +
+          (r.teamName ? ' <span class="team-record">(' + escapeHtml(r.teamName) + ')</span>' : '') + '</span>' +
+          '<span class="conf-team-record">' + escapeHtml(r.displayValue) + '</span>';
+        listEl.appendChild(row);
+      });
+    }).catch(function() {
+      listEl.innerHTML = '<div class="placeholder">Couldn\'t load leaders right now. Tap a category above to retry.</div>';
+    });
+  }
+
+  function loadConferenceTeams(confName) {
+    var section = document.getElementById('conf-teams-section');
+    if (!confName) { section.innerHTML = ''; return; }
+    section.innerHTML = '<div class="conf-teams-title">All ' + escapeHtml(confName) + ' teams</div><div class="placeholder">Loading teams...</div>';
+    loadSeasonRosters().then(function(rosters) {
+      renderConferenceTeams(section, confName, rosters[confName] || []);
+    }).catch(function() {
+      section.innerHTML = '<div class="conf-teams-title">All ' + escapeHtml(confName) + ' teams</div><div class="placeholder">Couldn\'t load the team list right now. Tap refresh scores, then reselect the conference.</div>';
+    });
+  }
+  function renderConferenceTeams(section, confName, teams) {
+    if (!teams || teams.length === 0) {
+      section.innerHTML = '<div class="conf-teams-title">All ' + escapeHtml(confName) + ' teams</div><div class="placeholder">No teams found for this conference yet \u2014 try again once more games are scheduled.</div>';
+      return;
+    }
+    var sorted = teams.slice().sort(function(a, b) { return (a.displayName || '').localeCompare(b.displayName || ''); });
+    section.innerHTML = '<div class="conf-teams-title">All ' + escapeHtml(confName) + ' teams (' + sorted.length + ') \u2014 tap a team for its full schedule</div><div class="conf-teams-grid" id="conf-teams-grid"></div>';
+    var grid = document.getElementById('conf-teams-grid');
+    sorted.forEach(function(team) {
+      var card = document.createElement('div');
+      card.className = 'conf-team-card';
+      var nameSpan = document.createElement('span');
+      nameSpan.className = 'conf-team-name';
+      nameSpan.innerHTML = teamLogoImg(team, 18, 'college-football') + escapeHtml(team.displayName || team.shortDisplayName || 'Unknown');
+      var recSpan = document.createElement('span');
+      recSpan.className = 'conf-team-record';
+      recSpan.id = 'conf-rec-' + team.id;
+      recSpan.textContent = teamRecordCache[team.id] || '\u00b7\u00b7\u00b7';
+      card.appendChild(nameSpan);
+      card.appendChild(recSpan);
+      card.addEventListener('click', function() {
+        openTeamSchedule('college-football', team.id, team.displayName || team.shortDisplayName);
+      });
+      grid.appendChild(card);
+
+      if (teamRecordCache[team.id] === undefined) {
+        fetch('https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams/' + team.id)
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            var rec = (d.team && d.team.record && d.team.record.items && d.team.record.items[0]) ? d.team.record.items[0].summary : '';
+            teamRecordCache[team.id] = rec;
+            var el = document.getElementById('conf-rec-' + team.id);
+            if (el) el.textContent = rec || '\u2014';
+          })
+          .catch(function() {
+            var el = document.getElementById('conf-rec-' + team.id);
+            if (el) el.textContent = '\u2014';
+          });
+      }
+    });
+  }
+
+  function applyFbsFilters() {
+    var q = document.getElementById('fbs-search').value.toLowerCase().trim();
+    var conf = document.getElementById('fbs-conf-filter').value;
+    filterList('scores-list', q, conf);
+    loadConferenceTeams(conf);
+  }
+  function applyNflFilters() {
+    var q = document.getElementById('nfl-search').value.toLowerCase().trim();
+    filterList('nfl-list', q, '');
+  }
+  function filterList(listId, q, conf) {
+    var listEl = document.getElementById(listId);
+    var groups = listEl.querySelectorAll('.conf-group, .fav-section');
+    var anyVisibleTotal = false;
+    groups.forEach(function(group) {
+      var groupConf = group.getAttribute('data-conf');
+      var confMatch = !conf || groupConf === conf || group.className.indexOf('fav-section') !== -1;
+      var anyVisible = false;
+      group.querySelectorAll('.game-card').forEach(function(card) {
+        var teamsText = card.getAttribute('data-teams') || '';
+        var textMatch = !q || teamsText.indexOf(q) !== -1;
+        var show = textMatch && confMatch;
+        card.style.display = show ? '' : 'none';
+        if (show) anyVisible = true;
+      });
+      group.style.display = anyVisible ? '' : 'none';
+      if (anyVisible) anyVisibleTotal = true;
+    });
+    var existingEmpty = listEl.querySelector('.filter-empty');
+    if (existingEmpty) existingEmpty.remove();
+    if (!anyVisibleTotal && groups.length > 0) {
+      var msg = document.createElement('div');
+      msg.className = 'placeholder filter-empty';
+      msg.textContent = conf ? ('No ' + conf + ' games on the current scoreboard.') : 'No games match your search.';
+      listEl.appendChild(msg);
+    }
+  }
+
+  /* ---------- Rankings ---------- */
+  var currentPoll = 'AP Top 25';
+  var rankingsCache = null;
+  function switchPoll(pollName) {
+    currentPoll = pollName;
+    document.querySelectorAll('.poll-btn').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-poll') === pollName);
+    });
+    if (rankingsCache) renderRankings(rankingsCache); else loadRankings();
+  }
+  function loadRankings(forceRefresh) {
+    var listEl = document.getElementById('rankings-list');
+    if (rankingsCache && !forceRefresh) { renderRankings(rankingsCache); return; }
+    listEl.innerHTML = '<div class="placeholder">Loading rankings...</div>';
+    fetch('https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        rankingsCache = data.rankings || [];
+        renderRankings(rankingsCache);
+        setStatus(true, 'Updated ' + timeAgo());
+      })
+      .catch(function() {
+        listEl.innerHTML = '<div class="placeholder">Couldn\'t load rankings right now. Check your connection and try again.</div>';
+        setStatus(false, 'Update failed');
+      });
+  }
+  function rankTeamName(r) {
+    var t = r.team;
+    if (t) {
+      if (typeof t === 'string') return t;
+      if (t.displayName) return t.displayName;
+      if (t.name) return t.name;
+      if (t.shortDisplayName) return t.shortDisplayName;
+      if (t.nickname) return t.nickname;
+      if (t.location) return t.location;
+    }
+    if (r.athlete && r.athlete.displayName) return r.athlete.displayName;
+    if (r.school) return r.school;
+    return null;
+  }
+  function renderRankings(rankings) {
+    var listEl = document.getElementById('rankings-list');
+    var poll = rankings.filter(function(p) { return p.name === currentPoll; })[0];
+    if (!poll) {
+      poll = rankings.filter(function(p) {
+        return (p.name || '').toLowerCase().indexOf(currentPoll.toLowerCase().split(' ')[0]) !== -1;
+      })[0];
+    }
+    if (!poll || !poll.ranks || poll.ranks.length === 0) {
+      listEl.innerHTML = '<div class="placeholder">' + currentPoll + ' isn\'t available right now \u2014 polls typically start posting a few weeks into the season.</div>';
+      return;
+    }
+    listEl.innerHTML = '';
+    poll.ranks.forEach(function(r) {
+      var card = document.createElement('div');
+      card.className = 'rank-card';
+      var num = document.createElement('div');
+      num.className = 'rank-num';
+      num.textContent = r.current;
+      var info = document.createElement('div');
+      info.className = 'rank-info';
+      var team = document.createElement('div');
+      team.className = 'rank-team';
+      team.textContent = rankTeamName(r) || 'Unknown';
+      var record = document.createElement('div');
+      record.className = 'rank-record';
+      record.textContent = (r.recordSummary || '') + (r.firstPlaceVotes ? ' \u00b7 ' + r.firstPlaceVotes + ' 1st place votes' : '');
+      info.appendChild(team); info.appendChild(record);
+      var trend = document.createElement('div');
+      var delta = (r.previous || r.current) - r.current;
+      if (r.previous === undefined || r.previous === 0) { trend.className = 'rank-trend same'; trend.textContent = 'NEW'; }
+      else if (delta > 0) { trend.className = 'rank-trend up'; trend.textContent = '\u25B2' + delta; }
+      else if (delta < 0) { trend.className = 'rank-trend down'; trend.textContent = '\u25BC' + Math.abs(delta); }
+      else { trend.className = 'rank-trend same'; trend.textContent = '\u2014'; }
+      card.appendChild(num); card.appendChild(info); card.appendChild(trend);
+      listEl.appendChild(card);
+    });
+
+    var bracketEl = document.getElementById('bracket-section');
+    if (currentPoll === 'Playoff') {
+      loadBracket(bracketEl);
+    } else {
+      bracketEl.innerHTML = '';
+    }
+  }
+
+  /* ---------- CFP bracket ---------- */
+  var bracketCache = null;
+  function loadBracket(container) {
+    if (bracketCache) { renderBracket(container, bracketCache); return; }
+    container.innerHTML = '<div class="placeholder">Loading playoff bracket...</div>';
+    fetch('https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=3&limit=50')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        bracketCache = data.events || [];
+        renderBracket(container, bracketCache);
+      })
+      .catch(function() {
+        container.innerHTML = '<div class="placeholder">Couldn\'t load bracket games right now.</div>';
+      });
+  }
+  function renderBracket(container, events) {
+    if (!events || events.length === 0) {
+      container.innerHTML = '<div class="placeholder">No CFP bracket games are scheduled yet \u2014 use the CFP rankings above to see the current seed picture until the bracket is set (typically released in early December).</div>';
+      return;
+    }
+    var byRound = {};
+    events.forEach(function(ev) {
+      var round = (ev.competitions[0].notes && ev.competitions[0].notes[0] && ev.competitions[0].notes[0].headline) || ev.season.slug || 'Playoff';
+      if (!byRound[round]) byRound[round] = [];
+      byRound[round].push(ev);
+    });
+    container.innerHTML = '';
+    Object.keys(byRound).forEach(function(round) {
+      var title = document.createElement('div');
+      title.className = 'bracket-round-title';
+      title.textContent = round;
+      container.appendChild(title);
+      byRound[round].forEach(function(ev) {
+        var comp = ev.competitions[0];
+        var sl = statusLabel(comp);
+        var teams = comp.competitors.slice().sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+        var box = document.createElement('div');
+        box.className = 'bracket-matchup';
+        var meta = document.createElement('div');
+        meta.className = 'game-meta' + (sl.live ? ' live' : '');
+        meta.textContent = sl.text;
+        box.appendChild(meta);
+        teams.forEach(function(t) {
+          var row = document.createElement('div');
+          var isWinner = t.winner === true;
+          row.className = 'bracket-team' + (isWinner ? ' winner' : '');
+          var seed = t.curatedRank && t.curatedRank.current && t.curatedRank.current <= 25 ? '#' + t.curatedRank.current + ' ' : '';
+          row.innerHTML = '<span><span class="seed">' + seed + '</span>' + teamLogoImg(t.team, 18, 'college-football') + t.team.shortDisplayName + '</span>' +
+            '<span class="bscore">' + (t.score !== undefined && sl.text !== 'Scheduled' ? scoreDisplayValue(t.score) : '') + '</span>';
+          box.appendChild(row);
+        });
+        container.appendChild(box);
+      });
+    });
+  }
+
+  /* ---------- Standings ---------- */
+  var standingsSport = 'college-football';
+  var standingsCache = {};
+  function switchStandingsSport(sport) {
+    standingsSport = sport;
+    document.querySelectorAll('[data-standings]').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-standings') === sport);
+    });
+    loadStandings();
+  }
+  function loadStandings(forceRefresh) {
+    var listEl = document.getElementById('standings-list');
+    if (standingsCache[standingsSport] && !forceRefresh) { renderStandings(standingsCache[standingsSport]); return; }
+    listEl.innerHTML = '<div class="placeholder">Loading standings...</div>';
+    var url = 'https://site.api.espn.com/apis/v2/sports/football/' + standingsSport + '/standings' +
+      (standingsSport === 'college-football' ? '?level=1' : '');
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        standingsCache[standingsSport] = data;
+        renderStandings(data);
+        setStatus(true, 'Updated ' + timeAgo());
+      })
+      .catch(function() {
+        listEl.innerHTML = '<div class="placeholder">Couldn\'t load standings right now. Check your connection and tap refresh.</div>';
+        setStatus(false, 'Update failed');
+      });
+  }
+  function findStatVal(entry, names) {
+    var stats = entry.stats || [];
+    for (var i = 0; i < names.length; i++) {
+      var hit = stats.filter(function(s) { return s.name === names[i] || s.shortDisplayName === names[i]; })[0];
+      if (hit) return hit.displayValue;
+    }
+    return '-';
+  }
+  function renderStandingsGroup(container, group) {
+    // group can itself contain sub-groups (conference -> division) or a direct 'standings' entries list
+    if (group.children && group.children.length > 0) {
+      group.children.forEach(function(child) { renderStandingsGroup(container, child); });
+      return;
+    }
+    var entries = (group.standings && group.standings.entries) || [];
+    if (entries.length === 0) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'standings-group';
+    var title = document.createElement('div');
+    title.className = 'standings-title';
+    title.textContent = group.name || group.abbreviation || 'Standings';
+    wrap.appendChild(title);
+    var tableWrap = document.createElement('div');
+    tableWrap.className = 'standings-table-wrap';
+    var table = document.createElement('table');
+    table.className = 'standings-table';
+    table.innerHTML = '<thead><tr><th>Team</th><th>W</th><th>L</th><th>Pct</th><th>Conf</th><th>Strk</th></tr></thead>';
+    var tbody = document.createElement('tbody');
+    entries.sort(function(a, b) {
+      var av = parseFloat(findStatVal(a, ['winPercent'])) || 0;
+      var bv = parseFloat(findStatVal(b, ['winPercent'])) || 0;
+      return bv - av;
+    });
+    entries.forEach(function(entry) {
+      var name = (entry.team && (entry.team.shortDisplayName || entry.team.displayName)) || 'Unknown';
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + teamLogoImg(entry.team, 16, standingsSport) + escapeHtml(name) + '</td>' +
+        '<td>' + findStatVal(entry, ['wins']) + '</td>' +
+        '<td>' + findStatVal(entry, ['losses']) + '</td>' +
+        '<td>' + findStatVal(entry, ['winPercent']) + '</td>' +
+        '<td>' + findStatVal(entry, ['vs. Conf.', 'conferenceRecord', 'vsConf']) + '</td>' +
+        '<td>' + findStatVal(entry, ['streak']) + '</td>';
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    tableWrap.appendChild(table);
+    wrap.appendChild(tableWrap);
+    container.appendChild(wrap);
+  }
+  function renderStandings(data) {
+    var listEl = document.getElementById('standings-list');
+    listEl.innerHTML = '';
+    var top = data.children || (data.standings ? [data] : []);
+    if (!top || top.length === 0) {
+      listEl.innerHTML = '<div class="placeholder">Standings aren\'t available right now.</div>';
+      return;
+    }
+    top.forEach(function(group) { renderStandingsGroup(listEl, group); });
+    if (!listEl.children.length) listEl.innerHTML = '<div class="placeholder">Standings aren\'t available right now.</div>';
+  }
+
+  /* ---------- My Teams (favorites: record, strength of schedule) ---------- */
+  function loadMyTeams(forceRefresh) {
+    var listEl = document.getElementById('myteams-list');
+    var favs = getFavorites().filter(function(f) { return f.id && f.sport; });
+    if (favs.length === 0) {
+      listEl.innerHTML = '<div class="placeholder">Star teams from the scoreboard tabs (tap the &#9734;) to track their record and strength of schedule here.</div>';
+      return;
+    }
+    listEl.innerHTML = '<div class="placeholder">Loading your teams...</div>';
+    Promise.all(favs.map(function(f) { return buildFavTeamCard(f); })).then(function(cards) {
+      listEl.innerHTML = '';
+      cards.forEach(function(c) { if (c) listEl.appendChild(c); });
+    });
+  }
+  function buildFavTeamCard(fav) {
+    var base = 'https://site.api.espn.com/apis/site/v2/sports/football/' + fav.sport + '/teams/' + fav.id;
+    return fetch(base).then(function(r) { return r.json(); }).then(function(data) {
+      var team = data.team;
+      var record = (team.record && team.record.items && team.record.items[0]) ? team.record.items[0].summary : 'N/A';
+      var standing = team.standingSummary || '';
+      var nextEvent = (team.nextEvent && team.nextEvent[0]) ? team.nextEvent[0].name : null;
+
+      var card = document.createElement('div');
+      card.className = 'favteam-card';
+      card.innerHTML = '<div class="favteam-head"><span class="favteam-name">' + teamLogoImg(team, 22, fav.sport) + '&#9733; ' + escapeHtml(fav.name) + '</span>' +
+        '<span class="favteam-record">' + record + '</span></div>' +
+        (standing ? '<div class="favteam-row"><span>' + standing + '</span><span></span></div>' : '') +
+        (nextEvent ? '<div class="favteam-row"><span>Next</span><span>' + nextEvent + '</span></div>' : '');
+
+      var sosWrap = document.createElement('div');
+      sosWrap.className = 'sos-bar-wrap';
+      sosWrap.innerHTML = '<div class="favteam-row"><span>Strength of schedule</span><span id="sos-val-' + fav.id + fav.sport + '">Calculating...</span></div>' +
+        '<div class="sos-bar-track"><div class="sos-bar-fill" id="sos-fill-' + fav.id + fav.sport + '" style="width:0%"></div></div>';
+      card.appendChild(sosWrap);
+
+      computeStrengthOfSchedule(fav).then(function(pct) {
+        var valEl = card.querySelector('#sos-val-' + fav.id + fav.sport);
+        var fillEl = card.querySelector('#sos-fill-' + fav.id + fav.sport);
+        if (pct === null) { valEl.textContent = 'Not enough data'; return; }
+        valEl.textContent = Math.round(pct * 100) + '% (opp. win rate)';
+        fillEl.style.width = Math.round(pct * 100) + '%';
+      });
+
+      return card;
+    }).catch(function() { return null; });
+  }
+  function computeStrengthOfSchedule(fav) {
+    return fetch('https://site.api.espn.com/apis/site/v2/sports/football/' + fav.sport + '/teams/' + fav.id + '/schedule')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var events = (data.events || []).filter(function(ev) { return ev.competitions && ev.competitions[0]; });
+        var oppIds = [];
+        events.forEach(function(ev) {
+          var comp = ev.competitions[0];
+          var opp = comp.competitors.filter(function(c) { return String(c.team.id) !== String(fav.id); })[0];
+          if (opp && opp.team && opp.team.id) oppIds.push(opp.team.id);
+        });
+        oppIds = oppIds.slice(0, 14); // full season slate
+        if (oppIds.length === 0) return null;
+        return Promise.all(oppIds.map(function(id) {
+          return fetch('https://site.api.espn.com/apis/site/v2/sports/football/' + fav.sport + '/teams/' + id)
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+              var items = d.team && d.team.record && d.team.record.items;
+              var overall = items && (items.filter(function(i) { return i.type === 'total'; })[0] || items[0]);
+              if (!overall || !overall.stats) return null;
+              var wins = (overall.stats.filter(function(s) { return s.name === 'wins'; })[0] || {}).value;
+              var losses = (overall.stats.filter(function(s) { return s.name === 'losses'; })[0] || {}).value;
+              if (wins === undefined || losses === undefined || (wins + losses) === 0) return null;
+              return wins / (wins + losses);
+            }).catch(function() { return null; });
+        })).then(function(pcts) {
+          var valid = pcts.filter(function(p) { return p !== null && p !== undefined; });
+          if (valid.length === 0) return null;
+          return valid.reduce(function(a, b) { return a + b; }, 0) / valid.length;
+        });
+      }).catch(function() { return null; });
+  }
+
+  /* ---------- Big play alerts ---------- */
+  var alertsEnabled = false;
+  var seenPlayIds = {};
+  function toggleBigPlayAlerts() {
+    alertsEnabled = !alertsEnabled;
+    document.getElementById('alert-toggle').classList.toggle('on', alertsEnabled);
+    try { localStorage.setItem('thornes-alerts', alertsEnabled ? '1' : '0'); } catch(e) {}
+    if (alertsEnabled && window.Notification && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+    if (alertsEnabled) pollBigPlays();
+  }
+  function dismissAlertBanner() {
+    document.getElementById('alert-banner').classList.remove('show');
+  }
+  function showAlertBanner(text) {
+    var banner = document.getElementById('alert-banner');
+    document.getElementById('alert-banner-text').textContent = text;
+    banner.classList.add('show');
+    clearTimeout(showAlertBanner._t);
+    showAlertBanner._t = setTimeout(dismissAlertBanner, 8000);
+    if (window.Notification && Notification.permission === 'granted') {
+      try { new Notification("Thorne's Sports", { body: text }); } catch(e) {}
+    }
+  }
+  function pollBigPlays() {
+    if (!alertsEnabled) return;
+    var favNames = getFavorites().map(function(f) { return f.name; });
+    if (favNames.length === 0) { setTimeout(pollBigPlays, 20000); return; }
+    var liveGames = [].concat(scoreboardData['college-football'] || [], scoreboardData.nfl || []).filter(function(ev) {
+      var comp = ev.competitions[0];
+      var isLive = comp.status.type.state === 'in';
+      var involvesFav = comp.competitors.some(function(c) { return favNames.indexOf(c.team.shortDisplayName) !== -1; });
+      return isLive && involvesFav;
+    });
+    Promise.all(liveGames.map(function(ev) {
+      var sport = (scoreboardData['college-football'] || []).indexOf(ev) !== -1 ? 'college-football' : 'nfl';
+      return fetch('https://site.api.espn.com/apis/site/v2/sports/football/' + sport + '/summary?event=' + ev.id)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var plays = data.scoringPlays || [];
+          plays.forEach(function(p) {
+            var pid = ev.id + '-' + (p.id || p.text);
+            if (seenPlayIds[pid]) return;
+            seenPlayIds[pid] = true;
+            var teamName = p.team && (p.team.shortDisplayName || p.team.displayName);
+            if (teamName && favNames.indexOf(teamName) !== -1) {
+              showAlertBanner((teamName || 'Score') + ': ' + p.text);
+            }
+          });
+        })
+        .catch(function() {});
+    })).then(function() {
+      setTimeout(pollBigPlays, 20000);
+    });
+  }
+  (function initAlerts() {
+    var saved = null;
+    try { saved = localStorage.getItem('thornes-alerts'); } catch(e) {}
+    if (saved === '1') {
+      alertsEnabled = true;
+      document.getElementById('alert-toggle').classList.add('on');
+    }
+  })();
+
+  /* ---------- Calendar ---------- */
+  var weekOffset = 0;
+  var calendarCache = {};
+  function fmtDate(d) {
+    var y = d.getFullYear(); var m = ('0' + (d.getMonth() + 1)).slice(-2); var day = ('0' + d.getDate()).slice(-2);
+    return y + '' + m + '' + day;
+  }
+  function getWeekDates(offset) {
+    var now = new Date();
+    var sunday = new Date(now);
+    sunday.setDate(now.getDate() - now.getDay() + (offset * 7));
+    sunday.setHours(0, 0, 0, 0);
+    var days = [];
+    for (var i = 0; i < 7; i++) { var d = new Date(sunday); d.setDate(sunday.getDate() + i); days.push(d); }
+    return days;
+  }
+  function sameDay(a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+  function fetchDaySport(sport, groupParam, dateStr) {
+    var url = 'https://site.api.espn.com/apis/site/v2/sports/football/' + sport + '/scoreboard?dates=' + dateStr + '&limit=300' + (groupParam ? '&groups=' + groupParam : '');
+    return fetch(url).then(function(r) { return r.json(); }).then(function(data) { return data.events || []; }).catch(function() { return []; });
+  }
+  function changeWeek(delta) { weekOffset += delta; loadCalendar(weekOffset === 0); }
+  function loadCalendar(forceRefresh) {
+    var days = getWeekDates(weekOffset);
+    var label = document.getElementById('week-label');
+    var opts = { month: 'short', day: 'numeric' };
+    label.textContent = (weekOffset === 0 ? 'This week \u00b7 ' : '') + days[0].toLocaleDateString([], opts) + ' - ' + days[6].toLocaleDateString([], opts);
+    var listEl = document.getElementById('calendar-list');
+    var cacheKey = weekOffset;
+    if (calendarCache[cacheKey] && !forceRefresh) { renderCalendar(days, calendarCache[cacheKey]); return; }
+    listEl.innerHTML = '<div class="placeholder">Loading week...</div>';
+    var fetches = [];
+    days.forEach(function(d) {
+      var dateStr = fmtDate(d);
+      fetches.push(fetchDaySport('college-football', '80', dateStr));
+      fetches.push(fetchDaySport('nfl', null, dateStr));
+    });
+    Promise.all(fetches).then(function(results) {
+      var byDay = [];
+      for (var i = 0; i < 7; i++) byDay.push({ cfb: results[i * 2] || [], nfl: results[i * 2 + 1] || [] });
+      calendarCache[cacheKey] = byDay;
+      renderCalendar(days, byDay);
+      setStatus(true, 'Updated ' + timeAgo());
+    }).catch(function() {
+      listEl.innerHTML = '<div class="placeholder">Couldn\'t load the calendar right now. Check your connection and try again.</div>';
+      setStatus(false, 'Update failed');
+    });
+  }
+  function eventTimeLabel(ev) {
+    var comp = ev.competitions[0]; var sl = statusLabel(comp);
+    if (sl.live || sl.text.indexOf('Final') !== -1) return sl.text;
+    if (comp.timeValid === false) return 'TBD';
+    var d = new Date(ev.date);
+    return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }
+  function eventMatchupHtml(ev, league) {
+    var comp = ev.competitions[0];
+    var sl = statusLabel(comp);
+    var showScore = sl.live || sl.text.indexOf('Final') !== -1;
+    var teams = comp.competitors.slice().sort(function(a, b) { return a.homeAway === 'home' ? 1 : -1; });
+    function teamHtml(t) {
+      var rank = '';
+      if (league === 'CFB' && t.curatedRank && t.curatedRank.current && t.curatedRank.current <= 25) {
+        rank = '<span class="rank-chip">#' + t.curatedRank.current + '</span>';
+      }
+      var rec = teamRecordSummary(t);
+      var recHtml = rec ? '<span class="team-record">(' + escapeHtml(rec) + ')</span>' : '';
+      var scoreHtml = showScore ? ' <span class="cal-score">' + escapeHtml(scoreDisplayValue(t.score)) + '</span>' : '';
+      return rank + teamLogoImg(t.team, 16, league === 'NFL' ? 'nfl' : 'college-football') + escapeHtml(t.team.shortDisplayName) + recHtml + scoreHtml;
+    }
+    return teamHtml(teams[0]) + ' @ ' + teamHtml(teams[1]);
+  }
+  function renderCalendar(days, byDay) {
+    var listEl = document.getElementById('calendar-list');
+    listEl.innerHTML = '';
+    var today = new Date();
+    var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    days.forEach(function(d, i) {
+      var data = byDay[i];
+      var cfbCount = data.cfb.length; var nflCount = data.nfl.length;
+      var isToday = sameDay(d, today); var hasGames = cfbCount > 0 || nflCount > 0;
+      var card = document.createElement('div');
+      card.className = 'day-card' + (hasGames ? ' has-games' : '') + (isToday ? ' today' : '');
+      var head = document.createElement('div'); head.className = 'day-head';
+      var name = document.createElement('div'); name.className = 'day-name';
+      name.textContent = dayNames[i] + ' \u00b7 ' + d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      if (isToday) { var tag = document.createElement('span'); tag.className = 'today-tag'; tag.textContent = 'Today'; name.appendChild(tag); }
+      head.appendChild(name);
+      var badges = document.createElement('div'); badges.className = 'day-badges';
+      if (hasGames) {
+        if (cfbCount > 0) { var cb = document.createElement('span'); cb.className = 'day-badge cfb'; cb.textContent = cfbCount + ' CFB'; badges.appendChild(cb); }
+        if (nflCount > 0) { var nb = document.createElement('span'); nb.className = 'day-badge nfl'; nb.textContent = nflCount + ' NFL'; badges.appendChild(nb); }
+      } else {
+        var none = document.createElement('span'); none.className = 'day-badge none'; none.textContent = 'No games'; badges.appendChild(none);
+      }
+      head.appendChild(badges); card.appendChild(head);
+      if (hasGames) {
+        var gamesEl = document.createElement('div'); gamesEl.className = 'day-games';
+        var allGames = data.nfl.map(function(ev) { return { ev: ev, league: 'NFL' }; }).concat(data.cfb.map(function(ev) { return { ev: ev, league: 'CFB' }; }));
+        allGames.forEach(function(item) {
+          var row = document.createElement('div'); row.className = 'day-game-row';
+          var m = document.createElement('span'); m.className = 'matchup'; m.innerHTML = '[' + item.league + '] ' + eventMatchupHtml(item.ev, item.league);
+          var t = document.createElement('span'); t.className = 'time'; t.textContent = eventTimeLabel(item.ev);
+          row.appendChild(m); row.appendChild(t); gamesEl.appendChild(row);
+        });
+        card.appendChild(gamesEl);
+        var hint = document.createElement('div'); hint.className = 'day-tap-hint'; hint.textContent = 'Tap to see matchups';
+        card.appendChild(hint);
+        card.addEventListener('click', function() {
+          var open = gamesEl.classList.toggle('open');
+          hint.textContent = open ? 'Tap to hide' : 'Tap to see matchups';
+        });
+      }
+      listEl.appendChild(card);
+    });
+  }
+
+  loadNews();
+  loadClemsonSchedule();
+  loadScores();
+  loadRankings();
+  loadNFL();
+  loadCalendar();
+  updateCountdown();
+  applyThemeForActiveTab();
+  if (alertsEnabled) pollBigPlays();
+  setInterval(function() { loadScores(); loadNFL(); }, 60000);
+  setInterval(updateCountdown, 60000);
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(function() {});
+  }
+</script>
+
+</body>
+</html>
