@@ -760,6 +760,7 @@
       <button class="subtab" data-subtab="news" onclick="switchClemsonSubtab('news')">News</button>
       <button class="subtab" data-subtab="portal" onclick="switchClemsonSubtab('portal')">Recruiting / Portal</button>
       <button class="subtab" data-subtab="roster" onclick="switchClemsonSubtab('roster')">Roster</button>
+      <button class="subtab" data-subtab="stats" onclick="switchClemsonSubtab('stats')">Season Stats</button>
     </div>
 
     <div class="subpanel active" id="subpanel-schedule">
@@ -790,6 +791,17 @@
       </div>
       <div id="roster-list">
         <div class="placeholder">Loading roster...</div>
+      </div>
+    </div>
+
+    <div class="subpanel" id="subpanel-stats">
+      <button class="refresh-btn" onclick="loadSeasonStats(true)">Refresh season stats</button>
+      <div class="disclaimer" style="font-size:0.72rem; color:var(--muted); margin-bottom:0.8rem; line-height:1.5;">Team totals are Clemson's cumulative season statistics from ESPN. Individual stats are each category's team season leader(s) as reported by ESPN — for players ranked below the leader in a category, see ESPN's site directly.</div>
+      <div id="team-season-stats">
+        <div class="placeholder">Loading team season stats...</div>
+      </div>
+      <div id="individual-season-stats">
+        <div class="placeholder">Loading individual season stats...</div>
       </div>
     </div>
   </div>
@@ -1301,6 +1313,7 @@
       clemsonLazy[name] = true;
       if (name === 'portal') loadRecruiting();
       if (name === 'roster') loadRoster();
+      if (name === 'stats') loadSeasonStats();
     }
   }
 
@@ -1424,6 +1437,106 @@
         list.appendChild(card);
       });
     });
+  }
+
+  /* ---------- Clemson season stats (team cumulative + individual leaders) ---------- */
+  var seasonStatsCache = null;
+  // Both season-stats endpoints below have shapes I couldn't verify live, so each parser
+  // tries several known ESPN response layouts rather than assuming one — same defensive
+  // pattern already used for the roster and leaders parsing above.
+  function normalizeTeamStatCategories(data) {
+    if (!data) return [];
+    var candidates = [
+      data.splits && data.splits.categories,
+      data.results && data.results.stats && data.results.stats.categories,
+      data.statistics && data.statistics.splits && data.statistics.splits.categories,
+      data.categories
+    ];
+    for (var i = 0; i < candidates.length; i++) {
+      if (Array.isArray(candidates[i]) && candidates[i].length > 0) return candidates[i];
+    }
+    return [];
+  }
+  function loadSeasonStats(forceRefresh) {
+    if (seasonStatsCache && !forceRefresh) { renderSeasonStats(seasonStatsCache); return; }
+    document.getElementById('team-season-stats').innerHTML = '<div class="placeholder">Loading team season stats...</div>';
+    document.getElementById('individual-season-stats').innerHTML = '<div class="placeholder">Loading individual season stats...</div>';
+
+    var teamStatsPromise = fetch('https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams/' + CLEMSON_ID + '/statistics')
+      .then(function(r) { if (!r.ok) throw new Error('bad response ' + r.status); return r.json(); })
+      .then(function(data) { return normalizeTeamStatCategories(data); })
+      .catch(function() { return null; }); // null = failed (distinct from [] = fetched fine, just empty)
+
+    var individualLeadersPromise = fetch('https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams/' + CLEMSON_ID)
+      .then(function(r) { if (!r.ok) throw new Error('bad response ' + r.status); return r.json(); })
+      .then(function(data) { return (data.team && data.team.leaders) || []; })
+      .catch(function() { return null; });
+
+    Promise.all([teamStatsPromise, individualLeadersPromise]).then(function(results) {
+      seasonStatsCache = { team: results[0], individual: results[1] };
+      renderSeasonStats(seasonStatsCache);
+    });
+  }
+  function renderSeasonStats(cache) {
+    renderTeamSeasonStats(cache.team);
+    renderIndividualSeasonStats(cache.individual);
+  }
+  function renderTeamSeasonStats(categories) {
+    var container = document.getElementById('team-season-stats');
+    if (categories === null) {
+      container.innerHTML = '<div class="placeholder">Couldn\'t load team season stats right now. Tap refresh to try again.</div>';
+      return;
+    }
+    if (!categories || categories.length === 0) {
+      container.innerHTML = '<div class="placeholder">Team season totals aren\'t posted yet for this season.</div>';
+      return;
+    }
+    var html = '<div class="predictor-title">Team Totals (Season)</div>';
+    var any = false;
+    categories.forEach(function(cat) {
+      var stats = cat.stats || [];
+      if (stats.length === 0) return;
+      any = true;
+      html += '<div class="player-cat-title">' + escapeHtml(cat.displayName || cat.abbreviation || cat.name || 'Stats') + '</div>';
+      html += '<div class="player-table-wrap"><table class="player-table"><tbody>';
+      stats.forEach(function(s) {
+        var label = s.displayName || s.shortDisplayName || s.name || '';
+        var val = s.displayValue !== undefined && s.displayValue !== null ? s.displayValue : (s.value !== undefined ? s.value : '');
+        html += '<tr><td>' + escapeHtml(label) + '</td><td>' + escapeHtml(String(val)) + '</td></tr>';
+      });
+      html += '</tbody></table></div>';
+    });
+    container.innerHTML = any ? html : '<div class="placeholder">Team season totals aren\'t posted yet for this season.</div>';
+  }
+  function renderIndividualSeasonStats(leaders) {
+    var container = document.getElementById('individual-season-stats');
+    if (leaders === null) {
+      container.innerHTML = '<div class="placeholder">Couldn\'t load individual season stats right now. Tap refresh to try again.</div>';
+      return;
+    }
+    if (!leaders || leaders.length === 0) {
+      container.innerHTML = '<div class="placeholder">Individual season leaders aren\'t posted yet for this season.</div>';
+      return;
+    }
+    var html = '<div class="predictor-title">Individual Leaders (Season)</div>';
+    var any = false;
+    leaders.forEach(function(cat) {
+      var catLeaders = cat.leaders || [];
+      if (catLeaders.length === 0) return;
+      any = true;
+      html += '<div class="player-cat-title">' + escapeHtml(cat.displayName || cat.shortDisplayName || cat.name || 'Category') + '</div>';
+      catLeaders.forEach(function(l) {
+        var athlete = l.athlete || {};
+        var name = athlete.fullName || athlete.displayName || l.displayName || 'Unknown';
+        var jersey = athlete.jersey ? '#' + athlete.jersey : '';
+        var pos = (athlete.position && (athlete.position.abbreviation || athlete.position.displayName)) || '';
+        var sub = [jersey, pos].filter(Boolean).join(' \u00b7 ');
+        html += '<div class="injury-card"><div class="injury-name">' + escapeHtml(name) +
+          '<span style="float:right; font-weight:700; color:var(--gold);">' + escapeHtml(l.displayValue || '') + '</span></div>' +
+          (sub ? '<div class="injury-detail">' + escapeHtml(sub) + '</div>' : '') + '</div>';
+      });
+    });
+    container.innerHTML = any ? html : '<div class="placeholder">Individual season leaders aren\'t posted yet for this season.</div>';
   }
 
   function statusLabel(comp) {
